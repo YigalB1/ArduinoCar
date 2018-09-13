@@ -28,8 +28,7 @@ const int trigPin   = 2;  // Ultrasonic (Yellow)
 const int echoPin   = 3;  // Ultrasonic (orange)
 
 int dist_array[SERVO_STEPS_NUM];
-
-
+// TBD add one to the size of array
 
 Servo myservo;  // create servo object to control a servo
                 // twelve servo objects can be created on most boards
