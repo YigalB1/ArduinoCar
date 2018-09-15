@@ -269,6 +269,8 @@ int  scan() {
 int  decide(int l_dist){
   int decision;
   
+  /*tria - changes*/
+
   #ifdef DEBUG
     Serial.print("in decide.");
     Serial.print(" l_dist=");
