@@ -15,9 +15,14 @@ http://www.instructables.com/id/Arduino-Motor-Shield-Tutorial/
 #define STOP_RANGE 6
 #define SERVO_STEPS_NUM 10
 #define SERVO_STEPS_INC 180 / SERVO_STEPS_NUM
+#define MOTOR_A_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
+#define MOTOR_B_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
+
 #define NANO 0 // make 0 in case of UNO
 
 #define DEBUG 1
+#define CALIBRATE 1
+
 
 const int FORWARD   = 0;     // const value can't change
 const int STOP      = 1;
@@ -28,6 +33,8 @@ const int RIGHT     = 5;
 const int trigPin   = 2;  // Ultrasonic (Yellow)
 const int echoPin   = 4;  // Ultrasonic (orange)
 
+
+
 int dist_array[SERVO_STEPS_NUM];
 
 
@@ -36,6 +43,8 @@ Servo myservo;  // create servo object to control a servo
                 // twelve servo objects can be created on most boards
 
 void setup() {
+  
+  int calib_in; // value from calibration potentiometer
   
   //Setup Channel A
   pinMode(12, OUTPUT); //Initiates Motor Channel A pin
@@ -56,6 +65,33 @@ void setup() {
   #ifdef DEBUG
     Serial.begin(9600);
   #endif
+  
+  // Calibrating the wheels, since some engines may run faster than others
+  // How: 
+  // HW: add potentiometer to allow extranal human input interface, keep connexted to laptop USB (?)
+  // SW: 
+  // use CALIBRATE to do it once
+  // 1 - let the car go for 2 seconds, then changing 
+  // 2 - define whicj wheel to claibrate (#define WHEEL). 
+  //      slow down the faster one
+  // 2 - wait 5 seconds to allow human change potentiometer 
+  // 3 - back to (1) untill car goes straight
+  // 4 - copy the value from the monitor and save it
+  #ifdef CALIBRATE
+    Serial.print("start calibrating");
+    while(true){
+      // endless loop to allow calibration
+      // once clibrated, unset CALIBRATE and re-start
+      go_forward();
+      calib_in = read_calibrate_input();
+      Serial.print("Calibration value read is: ");
+      Serial.print(calib_in);
+      delay(1000);
+      set_wheel_speed(LEFT);
+      delay(2000);
+    }
+  #endif
+  
   
 }
 
@@ -173,7 +209,7 @@ void go_forward()
 
   digitalWrite(MOTOR_A_DIR_PIN, HIGH); //Establishes forward direction of Channel A
   digitalWrite(MOTOR_A_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
-  analogWrite(MOTOR_A_SPEED_PIN, 255);   //Spins the motor on Channel A at full speed
+  analogWrite(MOTOR_A_SPEED_PIN, MOTOR_A_MAX_SPEED);   //Spins the motor on Channel A at full speed
   
 
   
@@ -181,7 +217,7 @@ void go_forward()
   //Motor B forward @ full speed
   digitalWrite(MOTOR_B_DIR_PIN, HIGH); //Establishes forward direction of Channel A
   digitalWrite(MOTOR_B_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
-  analogWrite(MOTOR_B_SPEED_PIN, 255);   //Spins the motor on Channel A at full speed
+  analogWrite(MOTOR_B_SPEED_PIN, MOTOR_B_MAX_SPEED);   //Spins the motor on Channel A at full speed
 
 
 
@@ -323,4 +359,19 @@ int readDistance() {
   //#endif 
   
   return(dist_t);
+}
+
+
+int read_calibrate_input()
+{
+  Serial.print("read_calibrate_input ");
+  // TBD - read from potentiometer
+  return 7; // TBD add read value
+}
+
+
+void set_wheel_speed(int WHEEL)
+{
+  Serial.print("set_wheel_speed");
+  
 }
