@@ -303,21 +303,34 @@ int  decide(int l_dist){
   
   #ifdef DEBUG
     Serial.print("in decide.");
-    Serial.print(" l_dist=");
-    Serial.println(l_dist);
   #endif 
   
-  
-  
-  
-  if (l_dist<STOP_RANGE)
-    decision = STOP;
-  else  if (l_dist<SHORT_RANGE)
-    decision = LEFT;
-  else
-    decision = FORWARD;
+  if (decide_if_forward())
+  	decision = FORWARD;
+  else {
+  	stop();
+  	delay(300);
+  	decision = BACKWARD;
+  }
     
   return decision;
+}
+
+// will decide if the car can go forward. 
+// if can't - returns 0 
+// if can - return any other
+int decide_if_forward() {
+  int i;
+  int fails = 0;
+  int min_dist = 100; // over max possible value - TODO - TBD - add a const or define for that
+  for (i = 0 ; i < SERVO_STEPS_NUM ; ++i) {
+  	min_dist = min_dist > dist_array[i] ? dist_array[i] : min_dist;
+  }
+  
+  if (STOP_RANGE >= min_dist)
+  	return 0; // STOP. don't go forward
+  
+  return 1; // able to go forward
 }
  
 // void  go(){}
