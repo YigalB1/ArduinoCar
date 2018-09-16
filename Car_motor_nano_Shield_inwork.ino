@@ -15,6 +15,7 @@ http://www.instructables.com/id/Arduino-Motor-Shield-Tutorial/
 #define STOP_RANGE 6
 #define SERVO_STEPS_NUM 10
 #define SERVO_STEPS_INC 180 / SERVO_STEPS_NUM
+#define NANO 0 // make 0 in case of UNO
 
 #define DEBUG 1
 
@@ -25,10 +26,11 @@ const int GO        = 3;
 const int LEFT      = 4;
 const int RIGHT     = 5;
 const int trigPin   = 2;  // Ultrasonic (Yellow)
-const int echoPin   = 3;  // Ultrasonic (orange)
+const int echoPin   = 4;  // Ultrasonic (orange)
 
 int dist_array[SERVO_STEPS_NUM];
-// TBD add one to the size of array
+
+
 
 Servo myservo;  // create servo object to control a servo
                 // twelve servo objects can be created on most boards
@@ -45,8 +47,11 @@ void setup() {
   pinMode(trigPin, OUTPUT); 
   pinMode(echoPin, INPUT); 
   
-  myservo.attach(7);  // attaches the servo on pin 7 to the servo object
-  
+  #if 1==NANO
+    myservo.attach(7);  // Use pin 7 in case of NANO
+  #else
+    myservo.attach(5);  // Use pin 5 in case of UNO
+  #endif
   
   #ifdef DEBUG
     Serial.begin(9600);
@@ -57,23 +62,17 @@ void setup() {
 void loop(){
   int dir,dist,tmp;
   
-  
   stop();
   dist = scan();
   
-  
-  
    for (tmp = 0; tmp < SERVO_STEPS_NUM; tmp += 1) {
-    
+    // TBD array need to be SERVO_STEPS_NUM+1
+    // enter for statment to ifdef
     
     #ifdef DEBUG
     Serial.print(dist_array[tmp]);
     Serial.print(" ");
     #endif 
-    
-    
-        
-  
    }
   
   
@@ -160,22 +159,20 @@ void go_forward()
   
   #ifdef DEBUG
     Serial.println("in go_forward");
-    Serial.print(MOTOR_A_DIR_PIN);
-    Serial.print(" ");
-    Serial.print(MOTOR_A_BREAK_PIN);
-    Serial.print(" ");
-    Serial.println(MOTOR_A_SPEED_PIN);
+  //  Serial.print(MOTOR_A_DIR_PIN);
+  //  Serial.print(" ");
+  //  Serial.print(MOTOR_A_BREAK_PIN);
+  //  Serial.print(" ");
+  //  Serial.println(MOTOR_A_SPEED_PIN);
   #endif 
   
 
 
 
     //Motor A forward @ full speed
-/*
-  digitalWrite(MOTOR_A_DIR_PIN, HIGH); //Establishes forward direction of Channel A
-*/
-  digitalWrite(MOTOR_A_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
 
+  digitalWrite(MOTOR_A_DIR_PIN, HIGH); //Establishes forward direction of Channel A
+  digitalWrite(MOTOR_A_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
   analogWrite(MOTOR_A_SPEED_PIN, 255);   //Spins the motor on Channel A at full speed
   
 
@@ -242,7 +239,7 @@ int  scan() {
   for (pos = 0; pos < SERVO_STEPS_NUM; pos += 1) {
   //for (pos = 0; pos <= 180; pos += 10) { // from 0 degrees to 180 degrees in steps of 10 degree
     myservo.write(pos*SERVO_STEPS_INC);              // tell servo to go to position in variable 'pos'
-    delay(150);                       // waits 15ms for the servo to reach the position
+    delay(500);                       // waits 15ms for the servo to reach the position
     
     read_dist = readDistance();
     
@@ -257,6 +254,7 @@ int  scan() {
 
   }
   
+  
   myservo.write(90); // bring to center
   return 30;    // TBD - to REMOVE!!!  
 }
@@ -269,8 +267,6 @@ int  scan() {
 int  decide(int l_dist){
   int decision;
   
-  /*tria - changes*/
-
   #ifdef DEBUG
     Serial.print("in decide.");
     Serial.print(" l_dist=");
@@ -314,7 +310,7 @@ int readDistance() {
   dist_t = duration_t*0.034/2;
   
   
-  #ifdef DEBUG
+  //#ifdef DEBUG
    //Serial.print("in read distance: ");
    //Serial.print("trigPin: ");
    //Serial.print(trigPin);
@@ -324,7 +320,7 @@ int readDistance() {
     // Serial.print(duration_t);
     //Serial.print("dist_t= ");
     // Serial.println(dist_t);
-  #endif 
+  //#endif 
   
   return(dist_t);
 }
