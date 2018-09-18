@@ -32,6 +32,7 @@ const int LEFT      = 4;
 const int RIGHT     = 5;
 const int trigPin   = 2;  // Ultrasonic (Yellow)
 const int echoPin   = 4;  // Ultrasonic (orange)
+const int analog_in_pin = 2 ; // potentiometer for claibration
 
 
 
@@ -375,9 +376,15 @@ int readDistance() {
 
 int read_calibrate_input()
 {
-  Serial.print("read_calibrate_input ");
-  // TBD - read from potentiometer
-  return 7; // TBD add read value
+  // reading value from potrentiometer
+  // done only in calibration mode in setup
+  int val = analogRead(analog_in_pin);              // input value 0..1023
+  int val1= map(val, 0, 1023, 0, 255);  // mapped value to 0..255
+  
+  Serial.print(val);
+  Serial.print(" mapped to 0..255 value: ");
+  Serial.print(val1);
+  return val1; 
 }
 
 
