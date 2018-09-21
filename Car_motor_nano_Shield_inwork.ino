@@ -5,15 +5,17 @@ http://www.instructables.com/id/Arduino-Motor-Shield-Tutorial/
 #include <Servo.h> 
 
 #define MOTOR_LEFT_DIR_PIN 12
-#define MOTOR_RIGHT_DIR_PIN 13
 #define MOTOR_LEFT_BREAK_PIN 9
-#define MOTOR_RIGHT_BREAK_PIN 8
 #define MOTOR_LEFT_SPEED_PIN 3
+#define MOTOR_RIGHT_DIR_PIN 13
+#define MOTOR_RIGHT_BREAK_PIN 8
 #define MOTOR_RIGHT_SPEED_PIN 11
+
 #define SHORT_RANGE 20
 #define STOP_RANGE 6
 #define SERVO_STEPS_NUM 10
 #define SERVO_STEPS_INC 180 / SERVO_STEPS_NUM
+
 #define MOTOR_LEFT_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
 #define MOTOR_RIGHT_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
 
