@@ -5,15 +5,17 @@ http://www.instructables.com/id/Arduino-Motor-Shield-Tutorial/
 #include <Servo.h> 
 
 #define MOTOR_LEFT_DIR_PIN 12
-#define MOTOR_RIGHT_DIR_PIN 13
 #define MOTOR_LEFT_BREAK_PIN 9
-#define MOTOR_RIGHT_BREAK_PIN 8
 #define MOTOR_LEFT_SPEED_PIN 3
+#define MOTOR_RIGHT_DIR_PIN 13
+#define MOTOR_RIGHT_BREAK_PIN 8
 #define MOTOR_RIGHT_SPEED_PIN 11
+
 #define SHORT_RANGE 20
 #define STOP_RANGE 6
 #define SERVO_STEPS_NUM 10
 #define SERVO_STEPS_INC 180 / SERVO_STEPS_NUM
+
 #define MOTOR_LEFT_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
 #define MOTOR_RIGHT_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
 
@@ -43,10 +45,10 @@ Servo myservo;  // create servo object to control a servo
                 // twelve servo objects can be created on most boards
 
 
+
 //******************* SETUP ************************
+
 void setup() {
-  
-  
   
   //Setup Channel A
   pinMode(12, OUTPUT); //Initiates Motor Channel A pin
@@ -73,7 +75,6 @@ void setup() {
   #endif
   
   
-  
   // test motors
   #ifdef TEST_MODE
     // testing: making sure car parts are well
@@ -85,15 +86,10 @@ void setup() {
       // test ultrasonic" TBD
       delay(10000000); // wait for ever, so I could debug the results
     }
-  
-  
   #endif
   
-  
-
-
-  
 }
+
 
 //******************* LOOP ************************
 void loop(){
@@ -124,12 +120,10 @@ void loop(){
     Serial.println(dir);
     Serial.print("steps inc= ");
     Serial.println(SERVO_STEPS_INC);
-    
   #endif 
   
   
-  
-  if (FORWARD==dir)
+  if (FORWARD == dir)
     go_forward();
   else {
     stop();
@@ -144,12 +138,10 @@ void loop(){
     go_left();
   if (RIGHT==dir)
     go_right();
-  *?  
-    
+  */
   
-
+  
   delay(3000);
-
 
 
   //Motor B backward @ half speed
@@ -194,8 +186,9 @@ void loop(){
   
 }
 
+
 // ********************** end of LOOP ***************************
-void motor_go(int l_side,int l_dir_pin,int l_break_pin,int l_speed)
+void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
 {
 
 //  l_side:       left or right
@@ -215,18 +208,18 @@ void motor_go(int l_side,int l_dir_pin,int l_break_pin,int l_speed)
     Serial.println(l_speed);
   #endif
 
-  int left_or_right, brk_pin,spd_pin;
-  if (RIGHT==l_side) {
+  int left_or_right, brk_pin, spd_pin;
+  if (RIGHT == l_side) {
     Serial.print("*** in RIGHT side ");
-    left_or_right=MOTOR_RIGHT_DIR_PIN;
-    brk_pin=MOTOR_RIGHT_BREAK_PIN;
-    spd_pin=MOTOR_RIGHT_SPEED_PIN;
+    left_or_right = MOTOR_RIGHT_DIR_PIN;
+    brk_pin = MOTOR_RIGHT_BREAK_PIN;
+    spd_pin = MOTOR_RIGHT_SPEED_PIN;
   }
   else {
     Serial.print("*** in LEFT side ");
-    left_or_right=MOTOR_LEFT_DIR_PIN;
-    brk_pin=MOTOR_LEFT_BREAK_PIN;
-    spd_pin=MOTOR_LEFT_SPEED_PIN;
+    left_or_right = MOTOR_LEFT_DIR_PIN;
+    brk_pin = MOTOR_LEFT_BREAK_PIN;
+    spd_pin = MOTOR_LEFT_SPEED_PIN;
   }
 
   #ifdef DEBUG
@@ -238,14 +231,12 @@ void motor_go(int l_side,int l_dir_pin,int l_break_pin,int l_speed)
     Serial.println(spd_pin);
     Serial.println("~~~~~~~~~~~~~~~~~~~ ");
   #endif
-
   
   digitalWrite(left_or_right, HIGH); //Establishes forward direction of Channel A
   digitalWrite(brk_pin, LOW);   //Disengage the Brake for Channel A
   analogWrite(spd_pin, l_speed);   //Spins the motor on Channel A at full speed
 
 }
-
 
 
 void go_forward()
@@ -278,10 +269,12 @@ void go_backward()
   
 }
 
+
 void go_right()
 {
   
 }
+
 
 void go_left()
 {
@@ -297,9 +290,6 @@ void go_left()
 }
 
 
-
-
-
 void  stop() {
   
   #ifdef DEBUG
@@ -311,6 +301,7 @@ void  stop() {
   digitalWrite(MOTOR_RIGHT_BREAK_PIN, HIGH);  //Engage the Brake for Channel B
 }
 
+
 int  scan() {
   int k=0,pos,read_dist,cnt;
   
@@ -319,16 +310,15 @@ int  scan() {
     Serial.println("in scan");
   #endif 
   
-
   
   for (pos = 0; pos < SERVO_STEPS_NUM; pos += 1) {
   //for (pos = 0; pos <= 180; pos += 10) { // from 0 degrees to 180 degrees in steps of 10 degree
-    myservo.write(pos*SERVO_STEPS_INC);              // tell servo to go to position in variable 'pos'
+    myservo.write(pos * SERVO_STEPS_INC);              // tell servo to go to position in variable 'pos'
     delay(500);                       // waits 15ms for the servo to reach the position
     
     read_dist = readDistance();
     
-    dist_array[pos]=read_dist;
+    dist_array[pos] = read_dist;
     
 // TBD read into array using k variable
 // currently - return something
@@ -339,17 +329,12 @@ int  scan() {
 
   }
   
-  
   myservo.write(90); // bring to center
   return readDistance();    // TBD - tmp untill array is analysed t!!!  
 }
 
 
-
-
-
-
-int  decide(int l_dist){
+int  decide(int l_dist) {
   int decision;
   
   #ifdef DEBUG
@@ -366,6 +351,7 @@ int  decide(int l_dist){
     
   return decision;
 }
+
 
 // will decide if the car can go forward. 
 // if can't - returns 0 
@@ -424,10 +410,6 @@ int readDistance() {
 }
 
 
-
-
-
-
 void test_motors(){
     // void because of human validatio
     // maybe add hardware in the future to measure wheels movements
@@ -469,17 +451,19 @@ void servo_test() {
   delay(2000);
 }
 
+
 void ultrasonic_test() {
   #ifdef DEBUG
     Serial.println("***** Testing UltraSonic sensor");
     int tmp;
-    for (int i=0;i<100;i++) {
-      tmp=readDistance();
+    for (int i = 0; i < 100; i++) {
+      tmp = readDistance();
       Serial.println(tmp);
       delay(500);
     }
   #endif
 }
+
 
 void Calibrate_wheels() {
   // Calibrating the wheels, since some engines may run faster than others
@@ -519,7 +503,7 @@ int read_calibrate_input()
   // reading value from potrentiometer
   // done only in calibration mode in setup
   int val = analogRead(analog_in_pin);              // input value 0..1023
-  int val1= map(val, 0, 1023, 0, 255);  // mapped value to 0..255
+  int val1 = map(val, 0, 1023, 0, 255);  // mapped value to 0..255
   
   Serial.print(val);
   Serial.print(" mapped to 0..255 value: ");
@@ -536,11 +520,10 @@ void set_wheel_speed(int l_wheel,int l_wheel_speed)
   Serial.print(" Speed " );
   Serial.println(l_wheel_speed);
   
-  if (LEFT==l_wheel)
-    motor_left_speed= l_wheel_speed;
+  if (LEFT == l_wheel)
+    motor_left_speed = l_wheel_speed;
   else
-    motor_right_speed= l_wheel_speed;
-  
-  
+    motor_right_speed = l_wheel_speed;
   
 }
+
