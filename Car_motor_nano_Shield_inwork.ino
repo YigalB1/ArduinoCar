@@ -74,11 +74,8 @@ void setup() {
     Calibrate_wheels();
   #endif
 
-
-  // test motors
+  // test motors: making sure car parts are well
   #ifdef TEST_MODE
-    // testing: making sure car parts are well
-
     while (true) {  // just for testing
       test_motors(); // human check - if wheels move
       servo_test();
@@ -108,9 +105,7 @@ void loop(){
     #endif
    }
 
-
   dir=decide(dist);
-
 
   #ifdef DEBUG
     Serial.println(" ");
@@ -121,7 +116,6 @@ void loop(){
     Serial.print("steps inc= ");
     Serial.println(SERVO_STEPS_INC);
   #endif
-
 
   if (FORWARD == dir)
     go_forward();
@@ -140,22 +134,9 @@ void loop(){
     go_right();
   */
 
-
-  delay(3000);
-
-
-  //Motor B backward @ half speed
-//  digitalWrite(MOTOR_RIGHT_DIR_PIN, LOW);  //Establishes backward direction of Channel B
-//  digitalWrite(MOTOR_RIGHT_BREAK_PIN, LOW);   //Disengage the Brake for Channel B
-//  analogWrite(MOTOR_RIGHT_SPEED_PIN, 123);    //Spins the motor on Channel B at half speed
-/*
-  digitalWrite(13, LOW);  //Establishes backward direction of Channel B
-  digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-  analogWrite(11, 123);    //Spins the motor on Channel B at half speed
-*/
-
-//  delay(3000);
-
+  delay(4000);
+  stop();
+  go_forward();
 
 //  digitalWrite(9, HIGH);  //Engage the Brake for Channel A
 //  digitalWrite(9, HIGH);  //Engage the Brake for Channel B
@@ -174,16 +155,12 @@ void loop(){
 //  digitalWrite(8, LOW);   //Disengage the Brake for Channel B
 //  analogWrite(11, 255);   //Spins the motor on Channel B at full speed
 
-
 //  delay(3000);
-
 
 //  digitalWrite(MOTOR_LEFT_BREAK_PIN, HIGH);  //Engage the Brake for Channel A
 //  digitalWrite(MOTOR_RIGHT_BREAK_PIN, HIGH);  //Engage the Brake for Channel B
 
-
 //  delay(1000);
-
 }
 
 
@@ -267,6 +244,12 @@ void go_forward()
 void go_backward()
 {
 
+  motor_go(LEFT,LOW,LOW, MOTOR_LEFT_MAX_SPEED);
+  motor_go(RIGHT,LOW,LOW, MOTOR_RIGHT_MAX_SPEED);
+
+  #ifdef DEBUG
+  Serial.println("in go_backward");
+  #endif
 }
 
 
