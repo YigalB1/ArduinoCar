@@ -267,6 +267,12 @@ void go_forward()
 void go_backward()
 {
 
+  motor_go(LEFT,LOW,LOW, MOTOR_LEFT_MAX_SPEED);
+  motor_go(RIGHT,LOW,LOW, MOTOR_RIGHT_MAX_SPEED);
+
+  #ifdef DEBUG
+  Serial.println("in go_backward");
+  #endif
 }
 
 
