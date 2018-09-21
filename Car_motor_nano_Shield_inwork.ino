@@ -123,7 +123,7 @@ void loop(){
   #endif 
   
   
-  if (FORWARD==dir)
+  if (FORWARD == dir)
     go_forward();
   else {
     stop();
@@ -188,7 +188,7 @@ void loop(){
 
 
 // ********************** end of LOOP ***************************
-void motor_go(int l_side,int l_dir_pin,int l_break_pin,int l_speed)
+void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
 {
 
 //  l_side:       left or right
@@ -208,18 +208,18 @@ void motor_go(int l_side,int l_dir_pin,int l_break_pin,int l_speed)
     Serial.println(l_speed);
   #endif
 
-  int left_or_right, brk_pin,spd_pin;
-  if (RIGHT==l_side) {
+  int left_or_right, brk_pin, spd_pin;
+  if (RIGHT == l_side) {
     Serial.print("*** in RIGHT side ");
-    left_or_right=MOTOR_RIGHT_DIR_PIN;
-    brk_pin=MOTOR_RIGHT_BREAK_PIN;
-    spd_pin=MOTOR_RIGHT_SPEED_PIN;
+    left_or_right = MOTOR_RIGHT_DIR_PIN;
+    brk_pin = MOTOR_RIGHT_BREAK_PIN;
+    spd_pin = MOTOR_RIGHT_SPEED_PIN;
   }
   else {
     Serial.print("*** in LEFT side ");
-    left_or_right=MOTOR_LEFT_DIR_PIN;
-    brk_pin=MOTOR_LEFT_BREAK_PIN;
-    spd_pin=MOTOR_LEFT_SPEED_PIN;
+    left_or_right = MOTOR_LEFT_DIR_PIN;
+    brk_pin = MOTOR_LEFT_BREAK_PIN;
+    spd_pin = MOTOR_LEFT_SPEED_PIN;
   }
 
   #ifdef DEBUG
@@ -313,12 +313,12 @@ int  scan() {
   
   for (pos = 0; pos < SERVO_STEPS_NUM; pos += 1) {
   //for (pos = 0; pos <= 180; pos += 10) { // from 0 degrees to 180 degrees in steps of 10 degree
-    myservo.write(pos*SERVO_STEPS_INC);              // tell servo to go to position in variable 'pos'
+    myservo.write(pos * SERVO_STEPS_INC);              // tell servo to go to position in variable 'pos'
     delay(500);                       // waits 15ms for the servo to reach the position
     
     read_dist = readDistance();
     
-    dist_array[pos]=read_dist;
+    dist_array[pos] = read_dist;
     
 // TBD read into array using k variable
 // currently - return something
@@ -334,7 +334,7 @@ int  scan() {
 }
 
 
-int  decide(int l_dist){
+int  decide(int l_dist) {
   int decision;
   
   #ifdef DEBUG
@@ -456,8 +456,8 @@ void ultrasonic_test() {
   #ifdef DEBUG
     Serial.println("***** Testing UltraSonic sensor");
     int tmp;
-    for (int i=0;i<100;i++) {
-      tmp=readDistance();
+    for (int i = 0; i < 100; i++) {
+      tmp = readDistance();
       Serial.println(tmp);
       delay(500);
     }
@@ -503,7 +503,7 @@ int read_calibrate_input()
   // reading value from potrentiometer
   // done only in calibration mode in setup
   int val = analogRead(analog_in_pin);              // input value 0..1023
-  int val1= map(val, 0, 1023, 0, 255);  // mapped value to 0..255
+  int val1 = map(val, 0, 1023, 0, 255);  // mapped value to 0..255
   
   Serial.print(val);
   Serial.print(" mapped to 0..255 value: ");
@@ -520,10 +520,10 @@ void set_wheel_speed(int l_wheel,int l_wheel_speed)
   Serial.print(" Speed " );
   Serial.println(l_wheel_speed);
   
-  if (LEFT==l_wheel)
-    motor_left_speed= l_wheel_speed;
+  if (LEFT == l_wheel)
+    motor_left_speed = l_wheel_speed;
   else
-    motor_right_speed= l_wheel_speed;
+    motor_right_speed = l_wheel_speed;
   
 }
 
