@@ -45,10 +45,10 @@ Servo myservo;  // create servo object to control a servo
                 // twelve servo objects can be created on most boards
 
 
+
 //******************* SETUP ************************
+
 void setup() {
-  
-  
   
   //Setup Channel A
   pinMode(12, OUTPUT); //Initiates Motor Channel A pin
@@ -75,7 +75,6 @@ void setup() {
   #endif
   
   
-  
   // test motors
   #ifdef TEST_MODE
     // testing: making sure car parts are well
@@ -87,15 +86,10 @@ void setup() {
       // test ultrasonic" TBD
       delay(10000000); // wait for ever, so I could debug the results
     }
-  
-  
   #endif
   
-  
-
-
-  
 }
+
 
 //******************* LOOP ************************
 void loop(){
@@ -126,9 +120,7 @@ void loop(){
     Serial.println(dir);
     Serial.print("steps inc= ");
     Serial.println(SERVO_STEPS_INC);
-    
   #endif 
-  
   
   
   if (FORWARD==dir)
@@ -147,11 +139,9 @@ void loop(){
   if (RIGHT==dir)
     go_right();
   */
-    
   
-
+  
   delay(3000);
-
 
 
   //Motor B backward @ half speed
@@ -195,6 +185,7 @@ void loop(){
 //  delay(1000);
   
 }
+
 
 // ********************** end of LOOP ***************************
 void motor_go(int l_side,int l_dir_pin,int l_break_pin,int l_speed)
@@ -240,14 +231,12 @@ void motor_go(int l_side,int l_dir_pin,int l_break_pin,int l_speed)
     Serial.println(spd_pin);
     Serial.println("~~~~~~~~~~~~~~~~~~~ ");
   #endif
-
   
   digitalWrite(left_or_right, HIGH); //Establishes forward direction of Channel A
   digitalWrite(brk_pin, LOW);   //Disengage the Brake for Channel A
   analogWrite(spd_pin, l_speed);   //Spins the motor on Channel A at full speed
 
 }
-
 
 
 void go_forward()
@@ -280,10 +269,12 @@ void go_backward()
   
 }
 
+
 void go_right()
 {
   
 }
+
 
 void go_left()
 {
@@ -299,9 +290,6 @@ void go_left()
 }
 
 
-
-
-
 void  stop() {
   
   #ifdef DEBUG
@@ -313,6 +301,7 @@ void  stop() {
   digitalWrite(MOTOR_RIGHT_BREAK_PIN, HIGH);  //Engage the Brake for Channel B
 }
 
+
 int  scan() {
   int k=0,pos,read_dist,cnt;
   
@@ -321,7 +310,6 @@ int  scan() {
     Serial.println("in scan");
   #endif 
   
-
   
   for (pos = 0; pos < SERVO_STEPS_NUM; pos += 1) {
   //for (pos = 0; pos <= 180; pos += 10) { // from 0 degrees to 180 degrees in steps of 10 degree
@@ -341,14 +329,9 @@ int  scan() {
 
   }
   
-  
   myservo.write(90); // bring to center
   return readDistance();    // TBD - tmp untill array is analysed t!!!  
 }
-
-
-
-
 
 
 int  decide(int l_dist){
@@ -368,6 +351,7 @@ int  decide(int l_dist){
     
   return decision;
 }
+
 
 // will decide if the car can go forward. 
 // if can't - returns 0 
@@ -426,10 +410,6 @@ int readDistance() {
 }
 
 
-
-
-
-
 void test_motors(){
     // void because of human validatio
     // maybe add hardware in the future to measure wheels movements
@@ -471,6 +451,7 @@ void servo_test() {
   delay(2000);
 }
 
+
 void ultrasonic_test() {
   #ifdef DEBUG
     Serial.println("***** Testing UltraSonic sensor");
@@ -482,6 +463,7 @@ void ultrasonic_test() {
     }
   #endif
 }
+
 
 void Calibrate_wheels() {
   // Calibrating the wheels, since some engines may run faster than others
@@ -543,6 +525,5 @@ void set_wheel_speed(int l_wheel,int l_wheel_speed)
   else
     motor_right_speed= l_wheel_speed;
   
-  
-  
 }
+
