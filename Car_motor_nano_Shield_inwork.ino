@@ -209,7 +209,7 @@ void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
     Serial.println("~~~~~~~~~~~~~~~~~~~ ");
   #endif
 
-  digitalWrite(left_or_right, HIGH); //Establishes forward direction of Channel A
+  digitalWrite(left_or_right, l_dir_pin); //set direction forward or backwards
   digitalWrite(brk_pin, LOW);   //Disengage the Brake for Channel A
   analogWrite(spd_pin, l_speed);   //Spins the motor on Channel A at full speed
 
