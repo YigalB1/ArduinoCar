@@ -55,7 +55,7 @@ void setup() {
   pinMode(MOTOR_LEFT_BREAK_PIN, OUTPUT); //Initiates Brake Channel A pin
   //Setup Channel B
   pinMode(MOTOR_RIGHT_DIR_PIN, OUTPUT); //Initiates Motor Channel A pin
-  pinMode(MOTOR_RIGHT_BREAK_PIN, OUTPUT);  //Initiates Brake Channel A pin
+  pinMode(MOTOR_RIGHT_BREAK_PIN , OUTPUT);  //Initiates Brake Channel A pin
   // UltrSonic sensor
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
