@@ -144,7 +144,7 @@ void loop(){
     go_left();
   if (RIGHT==dir)
     go_right();
-  *?  
+  */
     
   
 
