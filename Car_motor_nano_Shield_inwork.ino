@@ -92,9 +92,11 @@ void setup() {
 void loop(){
   int dir,dist,tmp;
 
-  stop();
+  // stop(); why stopping? go on as long as you can 
   dist = scan();
 
+// currently not using the array. TBD.
+/*
    for (tmp = 0; tmp < SERVO_STEPS_NUM; tmp += 1) {
     // TBD array need to be SERVO_STEPS_NUM+1
     // enter for statment to #if
@@ -104,7 +106,7 @@ void loop(){
     Serial.print(" ");
     #endif
    }
-
+*/
   dir=decide(dist);
 
   #if DEBUG
@@ -123,6 +125,9 @@ void loop(){
     stop();
     delay(1000);
     go_backward();
+    delay(4000);
+    stop();
+    go_forward();
   }
 
   /*
@@ -134,9 +139,7 @@ void loop(){
     go_right();
   */
 
-  delay(4000);
-  stop();
-  go_forward();
+
 
 //  digitalWrite(9, HIGH);  //Engage the Brake for Channel A
 //  digitalWrite(9, HIGH);  //Engage the Brake for Channel B
