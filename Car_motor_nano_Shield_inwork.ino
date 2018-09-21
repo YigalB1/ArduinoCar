@@ -97,9 +97,9 @@ void loop(){
 
    for (tmp = 0; tmp < SERVO_STEPS_NUM; tmp += 1) {
     // TBD array need to be SERVO_STEPS_NUM+1
-    // enter for statment to ifdef
+    // enter for statment to #if
 
-    #ifdef DEBUG
+    #if DEBUG
     Serial.print(dist_array[tmp]);
     Serial.print(" ");
     #endif
@@ -107,7 +107,7 @@ void loop(){
 
   dir=decide(dist);
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println(" ");
     Serial.print("dist= ");
     Serial.print(dist);
@@ -173,7 +173,7 @@ void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
 //  l_break_pin:  hardware break pin
 //  l_speed:      speed of motor
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("---------------------- ");
     Serial.print("in motor_go, side: ");
     Serial.println(l_side);
@@ -199,7 +199,7 @@ void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
     spd_pin = MOTOR_LEFT_SPEED_PIN;
   }
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.print("left_or_right: ");
     Serial.println(left_or_right);
     Serial.print("brk_pin: ");
@@ -219,7 +219,7 @@ void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
 void go_forward()
 {
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("in go_forward");
   //  Serial.print(MOTOR_LEFT_DIR_PIN);
   //  Serial.print(" ");
@@ -247,7 +247,7 @@ void go_backward()
   motor_go(LEFT,LOW,LOW, MOTOR_LEFT_MAX_SPEED);
   motor_go(RIGHT,LOW,LOW, MOTOR_RIGHT_MAX_SPEED);
 
-  #ifdef DEBUG
+  #if DEBUG
   Serial.println("in go_backward");
   #endif
 }
@@ -275,7 +275,7 @@ void go_left()
 
 void  stop() {
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("in stop");
   #endif
 
@@ -289,7 +289,7 @@ int  scan() {
   int k=0,pos,read_dist,cnt;
 
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("in scan");
   #endif
 
@@ -305,7 +305,7 @@ int  scan() {
 
 // TBD read into array using k variable
 // currently - return something
-  #ifdef DEBUG
+  #if DEBUG
     Serial.print("distance: ");
     Serial.println(read_dist);
   #endif
@@ -320,7 +320,7 @@ int  scan() {
 int  decide(int l_dist) {
   int decision;
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.print("in decide.");
   #endif
 
@@ -377,7 +377,7 @@ int readDistance() {
   dist_t = duration_t*0.034/2;
 
 
-  #ifdef DEBUG
+  #if DEBUG
    //Serial.print("in read distance: ");
    //Serial.print("trigPin: ");
    //Serial.print(trigPin);
@@ -421,7 +421,7 @@ void test_motors(){
 
 void servo_test() {
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("***** testing servo ");
   #endif
   myservo.write(0);
@@ -436,7 +436,7 @@ void servo_test() {
 
 
 void ultrasonic_test() {
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("***** Testing UltraSonic sensor");
     int tmp;
     for (int i = 0; i < 100; i++) {
