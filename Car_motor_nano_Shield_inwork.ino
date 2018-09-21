@@ -66,16 +66,16 @@ void setup() {
     myservo.attach(5);  // Use pin 5 in case of UNO
   #endif
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.begin(9600);
   #endif
 
-  #ifdef CALIBRATE
+  #if CALIBRATE
     Calibrate_wheels();
   #endif
 
   // test motors: making sure car parts are well
-  #ifdef TEST_MODE
+  #if TEST_MODE
     while (true) {  // just for testing
       test_motors(); // human check - if wheels move
       servo_test();
