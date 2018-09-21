@@ -293,7 +293,8 @@ int  scan() {
     Serial.println("in scan");
   #endif
 
-
+// TBD - as for now, look only forward , until car is stable
+/*
   for (pos = 0; pos < SERVO_STEPS_NUM; pos += 1) {
   //for (pos = 0; pos <= 180; pos += 10) { // from 0 degrees to 180 degrees in steps of 10 degree
     myservo.write(pos * SERVO_STEPS_INC);              // tell servo to go to position in variable 'pos'
@@ -303,14 +304,16 @@ int  scan() {
 
     dist_array[pos] = read_dist;
 
-// TBD read into array using k variable
-// currently - return something
-  #if DEBUG
-    Serial.print("distance: ");
-    Serial.println(read_dist);
-  #endif
+    // TBD read into array using k variable
+    // currently - return something
+    #if DEBUG
+      Serial.print("distance: ");
+      Serial.println(read_dist);
+    #endif
 
-  }
+    }
+*/
+
 
   myservo.write(90); // bring to center
   return readDistance();    // TBD - tmp untill array is analysed t!!!
