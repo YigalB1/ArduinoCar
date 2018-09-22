@@ -23,8 +23,8 @@ http://www.instructables.com/id/Arduino-Motor-Shield-Tutorial/
 #define UNo  1
 
 #define DEBUG 1
-#define CALIBRATE 1
-#define TEST_MODE 1
+#define CALIBRATE 0   // for calibration only, one time. 0 for normal
+#define TEST_MODE 0   // check if HW is Ok. 0 for normal
 
 
 const int FORWARD   = 0;     // const value can't change
@@ -66,16 +66,16 @@ void setup() {
     myservo.attach(5);  // Use pin 5 in case of UNO
   #endif
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.begin(9600);
   #endif
 
-  #ifdef CALIBRATE
+  #if CALIBRATE
     Calibrate_wheels();
   #endif
 
   // test motors: making sure car parts are well
-  #ifdef TEST_MODE
+  #if TEST_MODE
     while (true) {  // just for testing
       test_motors(); // human check - if wheels move
       servo_test();
@@ -92,22 +92,26 @@ void setup() {
 void loop(){
   int dir,dist,tmp;
 
-  stop();
+  // stop(); why stopping? go on as long as you can
   dist = scan();
+  stop();
+  delay(500); // TBD - remove or shorten
 
+// currently not using the array. TBD.
+/*
    for (tmp = 0; tmp < SERVO_STEPS_NUM; tmp += 1) {
     // TBD array need to be SERVO_STEPS_NUM+1
-    // enter for statment to ifdef
+    // enter for statment to #if
 
-    #ifdef DEBUG
+    #if DEBUG
     Serial.print(dist_array[tmp]);
     Serial.print(" ");
     #endif
    }
-
+*/
   dir=decide(dist);
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println(" ");
     Serial.print("dist= ");
     Serial.print(dist);
@@ -117,50 +121,26 @@ void loop(){
     Serial.println(SERVO_STEPS_INC);
   #endif
 
-  if (FORWARD == dir)
+  if (FORWARD == dir) {
     go_forward();
+    delay(1000); // drive for 1 seconds
+    }
   else {
     stop();
-    delay(1000);
+    delay(500);
     go_backward();
-  }
+    delay(2000); // get back from the obsticle
+    stop();
+    delay(250); // make sure engines stopped
+    go_forward(); // go forward again
+    }
+
 
   /*
-  if (BACKWARD==dir)
-    go_backward();
-  if (LEFT==dir)
-    go_left();
-  if (RIGHT==dir)
-    go_right();
-  */
-
-  delay(4000);
-  stop();
-  go_forward();
-
 //  digitalWrite(9, HIGH);  //Engage the Brake for Channel A
 //  digitalWrite(9, HIGH);  //Engage the Brake for Channel B
+*/
 
-
-//  delay(1000);
-
-
-  //Motor A forward @ full speed
-//  digitalWrite(12, LOW);  //Establishes backward direction of Channel A
-//  digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-//  analogWrite(3, 123);    //Spins the motor on Channel A at half speed
-
-  //Motor B forward @ full speed
-//  digitalWrite(13, HIGH); //Establishes forward direction of Channel B
-//  digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-//  analogWrite(11, 255);   //Spins the motor on Channel B at full speed
-
-//  delay(3000);
-
-//  digitalWrite(MOTOR_LEFT_BREAK_PIN, HIGH);  //Engage the Brake for Channel A
-//  digitalWrite(MOTOR_RIGHT_BREAK_PIN, HIGH);  //Engage the Brake for Channel B
-
-//  delay(1000);
 }
 
 
@@ -173,7 +153,7 @@ void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
 //  l_break_pin:  hardware break pin
 //  l_speed:      speed of motor
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("---------------------- ");
     Serial.print("in motor_go, side: ");
     Serial.println(l_side);
@@ -199,7 +179,7 @@ void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
     spd_pin = MOTOR_LEFT_SPEED_PIN;
   }
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.print("left_or_right: ");
     Serial.println(left_or_right);
     Serial.print("brk_pin: ");
@@ -209,7 +189,7 @@ void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
     Serial.println("~~~~~~~~~~~~~~~~~~~ ");
   #endif
 
-  digitalWrite(left_or_right, HIGH); //Establishes forward direction of Channel A
+  digitalWrite(left_or_right, l_dir_pin); //set direction forward or backwards
   digitalWrite(brk_pin, LOW);   //Disengage the Brake for Channel A
   analogWrite(spd_pin, l_speed);   //Spins the motor on Channel A at full speed
 
@@ -219,7 +199,7 @@ void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
 void go_forward()
 {
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("in go_forward");
   //  Serial.print(MOTOR_LEFT_DIR_PIN);
   //  Serial.print(" ");
@@ -247,7 +227,7 @@ void go_backward()
   motor_go(LEFT,LOW,LOW, MOTOR_LEFT_MAX_SPEED);
   motor_go(RIGHT,LOW,LOW, MOTOR_RIGHT_MAX_SPEED);
 
-  #ifdef DEBUG
+  #if DEBUG
   Serial.println("in go_backward");
   #endif
 }
@@ -275,7 +255,7 @@ void go_left()
 
 void  stop() {
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("in stop");
   #endif
 
@@ -289,11 +269,12 @@ int  scan() {
   int k=0,pos,read_dist,cnt;
 
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("in scan");
   #endif
 
-
+// TBD - as for now, look only forward , until car is stable
+/*
   for (pos = 0; pos < SERVO_STEPS_NUM; pos += 1) {
   //for (pos = 0; pos <= 180; pos += 10) { // from 0 degrees to 180 degrees in steps of 10 degree
     myservo.write(pos * SERVO_STEPS_INC);              // tell servo to go to position in variable 'pos'
@@ -303,14 +284,16 @@ int  scan() {
 
     dist_array[pos] = read_dist;
 
-// TBD read into array using k variable
-// currently - return something
-  #ifdef DEBUG
-    Serial.print("distance: ");
-    Serial.println(read_dist);
-  #endif
+    // TBD read into array using k variable
+    // currently - return something
+    #if DEBUG
+      Serial.print("distance: ");
+      Serial.println(read_dist);
+    #endif
 
-  }
+    }
+*/
+
 
   myservo.write(90); // bring to center
   return readDistance();    // TBD - tmp untill array is analysed t!!!
@@ -320,11 +303,11 @@ int  scan() {
 int  decide(int l_dist) {
   int decision;
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.print("in decide.");
   #endif
-
-  if (decide_if_forward())
+  // if (decide_if_forward()) TBD - use one measure now. later full scan.
+  if (STOP_RANGE < l_dist)
   	decision = FORWARD;
   else {
   	stop();
@@ -377,7 +360,7 @@ int readDistance() {
   dist_t = duration_t*0.034/2;
 
 
-  #ifdef DEBUG
+  #if DEBUG
    //Serial.print("in read distance: ");
    //Serial.print("trigPin: ");
    //Serial.print(trigPin);
@@ -421,7 +404,7 @@ void test_motors(){
 
 void servo_test() {
 
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("***** testing servo ");
   #endif
   myservo.write(0);
@@ -436,7 +419,7 @@ void servo_test() {
 
 
 void ultrasonic_test() {
-  #ifdef DEBUG
+  #if DEBUG
     Serial.println("***** Testing UltraSonic sensor");
     int tmp;
     for (int i = 0; i < 100; i++) {
