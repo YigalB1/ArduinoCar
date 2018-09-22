@@ -23,8 +23,8 @@ http://www.instructables.com/id/Arduino-Motor-Shield-Tutorial/
 #define UNo  1
 
 #define DEBUG 1
-#define CALIBRATE 0
-#define TEST_MODE 0
+#define CALIBRATE 0   // for calibration only, one time. 0 for normal
+#define TEST_MODE 0   // check if HW is Ok. 0 for normal
 
 
 const int FORWARD   = 0;     // const value can't change
@@ -127,48 +127,20 @@ void loop(){
     }
   else {
     stop();
-    delay(1000);
+    delay(500);
     go_backward();
-    delay(4000);
+    delay(2000); // get back from the obsticle
     stop();
-    go_forward();
+    delay(250); // make sure engines stopped
+    go_forward(); // go forward again
     }
 
 
   /*
-  if (BACKWARD==dir)
-    go_backward();
-  if (LEFT==dir)
-    go_left();
-  if (RIGHT==dir)
-    go_right();
-  */
-
-
-
 //  digitalWrite(9, HIGH);  //Engage the Brake for Channel A
 //  digitalWrite(9, HIGH);  //Engage the Brake for Channel B
+*/
 
-
-//  delay(1000);
-
-
-  //Motor A forward @ full speed
-//  digitalWrite(12, LOW);  //Establishes backward direction of Channel A
-//  digitalWrite(9, LOW);   //Disengage the Brake for Channel A
-//  analogWrite(3, 123);    //Spins the motor on Channel A at half speed
-
-  //Motor B forward @ full speed
-//  digitalWrite(13, HIGH); //Establishes forward direction of Channel B
-//  digitalWrite(8, LOW);   //Disengage the Brake for Channel B
-//  analogWrite(11, 255);   //Spins the motor on Channel B at full speed
-
-//  delay(3000);
-
-//  digitalWrite(MOTOR_LEFT_BREAK_PIN, HIGH);  //Engage the Brake for Channel A
-//  digitalWrite(MOTOR_RIGHT_BREAK_PIN, HIGH);  //Engage the Brake for Channel B
-
-//  delay(1000);
 }
 
 
