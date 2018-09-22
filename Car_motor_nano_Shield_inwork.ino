@@ -334,8 +334,8 @@ int  decide(int l_dist) {
   #if DEBUG
     Serial.print("in decide.");
   #endif
-
-  if (decide_if_forward())
+  // if (decide_if_forward()) TBD - use one measure now. later full scan.
+  if (STOP_RANGE < l_dist)
   	decision = FORWARD;
   else {
   	stop();
