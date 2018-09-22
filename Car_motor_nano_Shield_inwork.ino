@@ -23,8 +23,8 @@ http://www.instructables.com/id/Arduino-Motor-Shield-Tutorial/
 #define UNo  1
 
 #define DEBUG 1
-#define CALIBRATE 1
-#define TEST_MODE 1
+#define CALIBRATE 0
+#define TEST_MODE 0
 
 
 const int FORWARD   = 0;     // const value can't change
