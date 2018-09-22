@@ -92,8 +92,10 @@ void setup() {
 void loop(){
   int dir,dist,tmp;
 
-  // stop(); why stopping? go on as long as you can 
+  // stop(); why stopping? go on as long as you can
   dist = scan();
+  stop();
+  delay(500); // TBD - remove or shorten
 
 // currently not using the array. TBD.
 /*
@@ -119,8 +121,10 @@ void loop(){
     Serial.println(SERVO_STEPS_INC);
   #endif
 
-  if (FORWARD == dir)
+  if (FORWARD == dir) {
     go_forward();
+    delay(1000); // drive for 1 seconds
+    }
   else {
     stop();
     delay(1000);
@@ -128,7 +132,8 @@ void loop(){
     delay(4000);
     stop();
     go_forward();
-  }
+    }
+
 
   /*
   if (BACKWARD==dir)
