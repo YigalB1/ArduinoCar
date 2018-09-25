@@ -206,19 +206,6 @@ void loop(){
   dist = scan();
   stop();
   delay(500); // TBD - remove or shorten
-
-// currently not using the array. TBD.
-/*
-   for (tmp = 0; tmp < SERVO_STEPS_NUM; tmp += 1) {
-    // TBD array need to be SERVO_STEPS_NUM+1
-    // enter for statment to #if
-
-    #if DEBUG
-    Serial.print(dist_array[tmp]);
-    Serial.print(" ");
-    #endif
-   }
-*/
   dir=decide(dist);
 
   #if DEBUG
@@ -244,12 +231,6 @@ void loop(){
     delay(250); // make sure engines stopped
     go_forward(); // go forward again
     }
-
-
-  /*
-//  digitalWrite(9, HIGH);  //Engage the Brake for Channel A
-//  digitalWrite(9, HIGH);  //Engage the Brake for Channel B
-*/
 
 }
 
@@ -313,11 +294,6 @@ void go_forward()
 
   #if DEBUG
     Serial.println("in go_forward");
-  //  Serial.print(MOTOR_LEFT_DIR_PIN);
-  //  Serial.print(" ");
-  //  Serial.print(MOTOR_LEFT_BREAK_PIN);
-  //  Serial.print(" ");
-  //  Serial.println(MOTOR_LEFT_SPEED_PIN);
   #endif
 
 /*
@@ -341,10 +317,6 @@ void go_forward()
 void go_backward()
 {
 
-  /*
-  motor_go(LEFT,LOW,LOW, MOTOR_LEFT_MAX_SPEED);
-  motor_go(RIGHT,LOW,LOW, MOTOR_RIGHT_MAX_SPEED);
-  */
   motor_left.GoBackward(MOTOR_LEFT_MAX_SPEED);
   motor_right.GoBackward(MOTOR_RIGHT_MAX_SPEED);
 
@@ -365,12 +337,7 @@ void go_left()
 	#if DEBUG
   	Serial.println("in go_left");
   #endif
-/*
-    //Motor A forward @ full speed
-  digitalWrite(MOTOR_LEFT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
-  digitalWrite(MOTOR_LEFT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
-  analogWrite(MOTOR_LEFT_SPEED_PIN, 255);   //Spins the motor on Channel A at full speed
-*/
+
 motor_left.GoForward(MOTOR_LEFT_MAX_SPEED/2); // slower than right. to turn left
 /*
   //Motor B forward @ half speed
@@ -388,10 +355,6 @@ void  stop() {
     Serial.println("in stop");
   #endif
 
-/*
-  digitalWrite(MOTOR_LEFT_BREAK_PIN, HIGH);  //Engage the Brake for Channel A
-  digitalWrite(MOTOR_RIGHT_BREAK_PIN, HIGH);  //Engage the Brake for Channel B
-*/
 	motor_left.Stop();
   motor_right.Stop();
 
@@ -400,7 +363,6 @@ void  stop() {
 
 int  scan() {
   int k=0,pos,read_dist,cnt;
-
 
   #if DEBUG
     Serial.println("in scan");
