@@ -54,7 +54,7 @@ class Motor {
 public:
   Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd);
   ~Motor() {  }
-  
+
   void GoForward(int l_speed);
   void GoBackward(int l_speed);
   void Stop();
@@ -65,9 +65,9 @@ private:
   const int break_pin;
   const int speed_pin;
   const int max_speed;
-  
+
   int speed;
-  
+
   // object can't be copied
   Motor(const Motor& m);
   Motor& operator=(const Motor& m);
@@ -98,23 +98,23 @@ void Motor::GoForward(int l_speed)
     Serial.println(LOW);
     Serial.print(" Speed: ");
     Serial.println(l_speed);
-    
+
     Serial.print("brk_pin: ");
     Serial.println(break_pin);
     Serial.print("spd_pin: ");
     Serial.println(speed_pin);
     Serial.println("~~~~~~~~~~~~~~~~~~~ ");
   #endif
-  
+
   digitalWrite(dir_pin, HIGH); //set direction forward
-  digitalWrite(break_pin, LOW);   //Disengage the Brake 
+  digitalWrite(break_pin, LOW);   //Disengage the Brake
   analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
 }
 
 void Motor::GoBackward(int l_speed)
 {
 	//  l_speed:      speed of motor
-	
+
 	#if DEBUG
     Serial.println("---------------------- ");
     Serial.print("in motor side: ");
@@ -125,16 +125,16 @@ void Motor::GoBackward(int l_speed)
     Serial.println(LOW);
     Serial.print(" Speed: ");
     Serial.println(l_speed);
-    
+
     Serial.print("brk_pin: ");
     Serial.println(break_pin);
     Serial.print("spd_pin: ");
     Serial.println(speed_pin);
     Serial.println("~~~~~~~~~~~~~~~~~~~ ");
   #endif
-	
+
 	digitalWrite(dir_pin, LOW); //set direction backwards
-	digitalWrite(break_pin, LOW);   //Disengage the Brake 
+	digitalWrite(break_pin, LOW);   //Disengage the Brake
   analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
 }
 
@@ -371,14 +371,14 @@ void go_left()
   digitalWrite(MOTOR_LEFT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
   analogWrite(MOTOR_LEFT_SPEED_PIN, 255);   //Spins the motor on Channel A at full speed
 */
-motor_left.GoForward(123); // slower than right. to turn left
+motor_left.GoForward(MOTOR_LEFT_MAX_SPEED/2); // slower than right. to turn left
 /*
   //Motor B forward @ half speed
   digitalWrite(MOTOR_RIGHT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
   digitalWrite(MOTOR_RIGHT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
   analogWrite(MOTOR_RIGHT_SPEED_PIN, 123);   //Spins the motor on Channel A at half speed
 */
-motor_right.GoForward(255); // faster than left. to go left
+motor_right.GoForward(MOTOR_RIGHT_MAX_SPEED); // faster than left. to go left
 }
 
 
@@ -394,7 +394,7 @@ void  stop() {
 */
 	motor_left.Stop();
   motor_right.Stop();
-	
+
 }
 
 
