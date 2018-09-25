@@ -362,6 +362,9 @@ void go_right()
 
 void go_left()
 {
+	#if DEBUG
+  	Serial.println("in go_left");
+  #endif
 /*
     //Motor A forward @ full speed
   digitalWrite(MOTOR_LEFT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
