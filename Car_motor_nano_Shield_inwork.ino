@@ -55,9 +55,7 @@ public:
   Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd);
   ~Motor() {  }
   
-  void GoForward(int l_speed);
-  void GoBackward(int l_speed);
-  void Stop();
+  void Go(int l_dir_pin, int l_break_pin, int l_speed);
   int Get_Speed();
 private:
 	const int name;
@@ -84,8 +82,10 @@ Motor::Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd):
 }
 
 
-void Motor::GoForward(int l_speed)
+void Motor::Go(int l_dir_pin, int l_break_pin, int l_speed)
 {
+//  l_dir_pin:    hardware direction pin
+//  l_break_pin:  hardware break pin
 //  l_speed:      speed of motor
 
 	#if DEBUG
@@ -93,9 +93,9 @@ void Motor::GoForward(int l_speed)
     Serial.print("in motor side: ");
     Serial.println(name);
     Serial.print(" direction pin: ");
-    Serial.println(HIGH);
+    Serial.println(l_dir_pin);
     Serial.print(" break pin: ");
-    Serial.println(LOW);
+    Serial.println(l_break_pin);
     Serial.print(" Speed: ");
     Serial.println(l_speed);
     
@@ -106,42 +106,9 @@ void Motor::GoForward(int l_speed)
     Serial.println("~~~~~~~~~~~~~~~~~~~ ");
   #endif
   
-  digitalWrite(dir_pin, HIGH); //set direction forward
-  digitalWrite(break_pin, LOW);   //Disengage the Brake 
-  analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
-}
-
-void Motor::GoBackward(int l_speed)
-{
-	//  l_speed:      speed of motor
-	
-	#if DEBUG
-    Serial.println("---------------------- ");
-    Serial.print("in motor side: ");
-    Serial.println(name);
-    Serial.print(" direction pin: ");
-    Serial.println(LOW);
-    Serial.print(" break pin: ");
-    Serial.println(LOW);
-    Serial.print(" Speed: ");
-    Serial.println(l_speed);
-    
-    Serial.print("brk_pin: ");
-    Serial.println(break_pin);
-    Serial.print("spd_pin: ");
-    Serial.println(speed_pin);
-    Serial.println("~~~~~~~~~~~~~~~~~~~ ");
-  #endif
-	
-	digitalWrite(dir_pin, LOW); //set direction backwards
-	digitalWrite(break_pin, LOW);   //Disengage the Brake 
-  analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
-}
-
-
-void Motor::Stop()
-{
-	digitalWrite(break_pin, HIGH);  //Engage the Brake
+  digitalWrite(dir_pin, l_dir_pin); //set direction forward or backwards
+  digitalWrite(break_pin, l_break_pin);   //Disengage the Brake for Channel A
+  analogWrite(speed_pin, l_speed);   //Spins the motor on Channel A at full speed
 }
 
 
@@ -327,14 +294,14 @@ void go_forward()
   digitalWrite(MOTOR_LEFT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
   analogWrite(MOTOR_LEFT_SPEED_PIN, motor_left_speed);   //Spins the motor on Channel A at full speed
 */
-  motor_left.GoForward(motor_left.Get_Speed());
+  motor_left.Go(HIGH, LOW, motor_left.Get_Speed());
 /*
   //Motor B forward @ full speed
   digitalWrite(MOTOR_RIGHT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
   digitalWrite(MOTOR_RIGHT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
   analogWrite(MOTOR_RIGHT_SPEED_PIN, motor_right_speed);   //Spins the motor on Channel A at full speed
 */
-  motor_right.GoForward(motor_right.Get_Speed());
+  motor_right.Go(HIGH, LOW, motor_right.Get_Speed());
 }
 
 
@@ -345,8 +312,8 @@ void go_backward()
   motor_go(LEFT,LOW,LOW, MOTOR_LEFT_MAX_SPEED);
   motor_go(RIGHT,LOW,LOW, MOTOR_RIGHT_MAX_SPEED);
   */
-  motor_left.GoBackward(MOTOR_LEFT_MAX_SPEED);
-  motor_right.GoBackward(MOTOR_RIGHT_MAX_SPEED);
+  motor_left.Go(LOW, LOW, MOTOR_LEFT_MAX_SPEED);
+  motor_right.Go(LOW, LOW, MOTOR_RIGHT_MAX_SPEED);
 
   #if DEBUG
   Serial.println("in go_backward");
@@ -362,20 +329,15 @@ void go_right()
 
 void go_left()
 {
-/*
     //Motor A forward @ full speed
   digitalWrite(MOTOR_LEFT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
   digitalWrite(MOTOR_LEFT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
   analogWrite(MOTOR_LEFT_SPEED_PIN, 255);   //Spins the motor on Channel A at full speed
-*/
-motor_left.GoForward(123); // slower than right. to turn left
-/*
+
   //Motor B forward @ half speed
   digitalWrite(MOTOR_RIGHT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
   digitalWrite(MOTOR_RIGHT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
   analogWrite(MOTOR_RIGHT_SPEED_PIN, 123);   //Spins the motor on Channel A at half speed
-*/
-motor_right.GoForward(255); // faster than left. to go left
 }
 
 
@@ -385,13 +347,9 @@ void  stop() {
     Serial.println("in stop");
   #endif
 
-/*
+
   digitalWrite(MOTOR_LEFT_BREAK_PIN, HIGH);  //Engage the Brake for Channel A
   digitalWrite(MOTOR_RIGHT_BREAK_PIN, HIGH);  //Engage the Brake for Channel B
-*/
-	motor_left.Stop();
-  motor_right.Stop();
-	
 }
 
 
@@ -513,21 +471,21 @@ void test_motors(){
     Serial.println("**** Testing Motors");
     Serial.println("----Start LEFT,slow speed");
     //motor_go(LEFT,HIGH,LOW, MOTOR_LEFT_MAX_SPEED/2);
-    motor_left.GoForward(MOTOR_LEFT_MAX_SPEED/2);
+    motor_left.Go(HIGH, LOW, MOTOR_LEFT_MAX_SPEED/2);
     delay (2000);
     Serial.println("----Start LEFT,high speed");
     //motor_go(LEFT,HIGH,LOW, MOTOR_LEFT_MAX_SPEED);
-    motor_left.GoForward(MOTOR_LEFT_MAX_SPEED);
+    motor_left.Go(HIGH, LOW, MOTOR_LEFT_MAX_SPEED);
     delay (2000);
     stop();
     delay(2000);
     Serial.println("----Start RIGHT,slow speed");
     //motor_go(RIGHT,HIGH,LOW, MOTOR_RIGHT_MAX_SPEED/2);
-    motor_right.GoForward(MOTOR_RIGHT_MAX_SPEED/2);
+    motor_right.Go(HIGH,LOW, MOTOR_RIGHT_MAX_SPEED/2);
     delay (2000);
     Serial.println("----Start RIGHT,high speed");
     //motor_go(RIGHT,HIGH,LOW, MOTOR_RIGHT_MAX_SPEED);
-    motor_right.GoForward(MOTOR_RIGHT_MAX_SPEED);
+    motor_right.Go(HIGH,LOW, MOTOR_RIGHT_MAX_SPEED);
     delay (2000);
     stop();
 
