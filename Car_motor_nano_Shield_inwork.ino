@@ -4,6 +4,11 @@ http://www.instructables.com/id/Arduino-Motor-Shield-Tutorial/
 *************************************************************/
 #include <Servo.h>
 
+/*
+#include <string>
+using std::string;
+*/
+
 #define MOTOR_LEFT_DIR_PIN 12
 #define MOTOR_LEFT_BREAK_PIN 9
 #define MOTOR_LEFT_SPEED_PIN 3
@@ -45,6 +50,78 @@ Servo myservo;  // create servo object to control a servo
                 // twelve servo objects can be created on most boards
 
 
+class Motor {
+public:
+  Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd);
+  ~Motor() {  }
+  
+  void Go(int l_dir_pin, int l_break_pin, int l_speed);
+  int Get_Speed();
+private:
+	const int name;
+  const int dir_pin;
+  const int break_pin;
+  const int speed_pin;
+  const int max_speed;
+  
+  int speed;
+  
+  // object can't be copied
+  Motor(const Motor& m);
+  Motor& operator=(const Motor& m);
+};
+
+Motor::Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd):
+	name(m_name),
+	dir_pin(dir_p),
+	break_pin(brk_p),
+	speed_pin(spd_p),
+	max_speed(max_spd)
+{
+	speed = max_spd;
+}
+
+
+void Motor::Go(int l_dir_pin, int l_break_pin, int l_speed)
+{
+//  l_dir_pin:    hardware direction pin
+//  l_break_pin:  hardware break pin
+//  l_speed:      speed of motor
+
+	#if DEBUG
+    Serial.println("---------------------- ");
+    Serial.print("in motor side: ");
+    Serial.println(name);
+    Serial.print(" direction pin: ");
+    Serial.println(l_dir_pin);
+    Serial.print(" break pin: ");
+    Serial.println(l_break_pin);
+    Serial.print(" Speed: ");
+    Serial.println(l_speed);
+    
+    Serial.print("brk_pin: ");
+    Serial.println(break_pin);
+    Serial.print("spd_pin: ");
+    Serial.println(speed_pin);
+    Serial.println("~~~~~~~~~~~~~~~~~~~ ");
+  #endif
+  
+  digitalWrite(dir_pin, l_dir_pin); //set direction forward or backwards
+  digitalWrite(break_pin, l_break_pin);   //Disengage the Brake for Channel A
+  analogWrite(speed_pin, l_speed);   //Spins the motor on Channel A at full speed
+}
+
+
+int Motor::Get_Speed()
+{
+	return speed;
+}
+
+
+//******************* PRE-SETUP - CREATE MOTORS ************************
+
+Motor motor_left(LEFT, MOTOR_LEFT_DIR_PIN, MOTOR_LEFT_BREAK_PIN, MOTOR_LEFT_SPEED_PIN, MOTOR_LEFT_MAX_SPEED);
+Motor motor_right(RIGHT, MOTOR_RIGHT_DIR_PIN, MOTOR_RIGHT_BREAK_PIN, MOTOR_RIGHT_SPEED_PIN, MOTOR_RIGHT_MAX_SPEED);
 
 //******************* SETUP ************************
 
@@ -145,6 +222,7 @@ void loop(){
 
 
 // ********************** end of LOOP ***************************
+/*
 void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
 {
 
@@ -194,6 +272,7 @@ void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
   analogWrite(spd_pin, l_speed);   //Spins the motor on Channel A at full speed
 
 }
+*/
 
 
 void go_forward()
@@ -208,24 +287,33 @@ void go_forward()
   //  Serial.println(MOTOR_LEFT_SPEED_PIN);
   #endif
 
+/*
   //Motor A forward @ full speed
 
   digitalWrite(MOTOR_LEFT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
   digitalWrite(MOTOR_LEFT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
   analogWrite(MOTOR_LEFT_SPEED_PIN, motor_left_speed);   //Spins the motor on Channel A at full speed
-
+*/
+  motor_left.Go(HIGH, LOW, motor_left.Get_Speed());
+/*
   //Motor B forward @ full speed
   digitalWrite(MOTOR_RIGHT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
   digitalWrite(MOTOR_RIGHT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
   analogWrite(MOTOR_RIGHT_SPEED_PIN, motor_right_speed);   //Spins the motor on Channel A at full speed
+*/
+  motor_right.Go(HIGH, LOW, motor_right.Get_Speed());
 }
 
 
 void go_backward()
 {
 
+  /*
   motor_go(LEFT,LOW,LOW, MOTOR_LEFT_MAX_SPEED);
   motor_go(RIGHT,LOW,LOW, MOTOR_RIGHT_MAX_SPEED);
+  */
+  motor_left.Go(LOW, LOW, MOTOR_LEFT_MAX_SPEED);
+  motor_right.Go(LOW, LOW, MOTOR_RIGHT_MAX_SPEED);
 
   #if DEBUG
   Serial.println("in go_backward");
@@ -382,18 +470,22 @@ void test_motors(){
 
     Serial.println("**** Testing Motors");
     Serial.println("----Start LEFT,slow speed");
-    motor_go(LEFT,HIGH,LOW, MOTOR_LEFT_MAX_SPEED/2);
+    //motor_go(LEFT,HIGH,LOW, MOTOR_LEFT_MAX_SPEED/2);
+    motor_left.Go(HIGH, LOW, MOTOR_LEFT_MAX_SPEED/2);
     delay (2000);
     Serial.println("----Start LEFT,high speed");
-    motor_go(LEFT,HIGH,LOW, MOTOR_LEFT_MAX_SPEED);
+    //motor_go(LEFT,HIGH,LOW, MOTOR_LEFT_MAX_SPEED);
+    motor_left.Go(HIGH, LOW, MOTOR_LEFT_MAX_SPEED);
     delay (2000);
     stop();
     delay(2000);
     Serial.println("----Start RIGHT,slow speed");
-    motor_go(RIGHT,HIGH,LOW, MOTOR_RIGHT_MAX_SPEED/2);
+    //motor_go(RIGHT,HIGH,LOW, MOTOR_RIGHT_MAX_SPEED/2);
+    motor_right.Go(HIGH,LOW, MOTOR_RIGHT_MAX_SPEED/2);
     delay (2000);
     Serial.println("----Start RIGHT,high speed");
-    motor_go(RIGHT,HIGH,LOW, MOTOR_RIGHT_MAX_SPEED);
+    //motor_go(RIGHT,HIGH,LOW, MOTOR_RIGHT_MAX_SPEED);
+    motor_right.Go(HIGH,LOW, MOTOR_RIGHT_MAX_SPEED);
     delay (2000);
     stop();
 
