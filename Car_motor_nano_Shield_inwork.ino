@@ -15,6 +15,8 @@ using std::string;
 #define MOTOR_RIGHT_DIR_PIN 13
 #define MOTOR_RIGHT_BREAK_PIN 8
 #define MOTOR_RIGHT_SPEED_PIN 11
+#define servo1_pin 5  // Servo1 because future pla to have two.
+                      // pin 5 is now the same for Uno and Nano
 
 #define SHORT_RANGE 20
 #define STOP_RANGE 6
@@ -169,12 +171,13 @@ void setup() {
   // UltrSonic sensor
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-
-  #if 1==NANO
-    myservo.attach(7);  // Use pin 7 in case of NANO
-  #else
-    myservo.attach(5);  // Use pin 5 in case of UNO
-  #endif
+  myservo.attach(servo1_pin);
+// Sep 26: eliminated. from noa on UNO & Nano has same servo pin
+  //#if 1==NANO
+  //  myservo.attach(7);  // Use pin 7 in case of NANO
+  //#else
+  //  myservo.attach(5);  // Use pin 5 in case of UNO
+  //#endif
 
   #if DEBUG
     Serial.begin(9600);
