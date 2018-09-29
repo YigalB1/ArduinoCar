@@ -1,7 +1,7 @@
 Arduino CAR Pinout:
 
 Motor driver Board
-Pin Name		
+Pin Name
 		Ch A (left)	Ch B (right)	Nano / Uno	Comments
 Direction	D12		D13		same		forced by Motor driver board
 PWM (speed)	D3		D11		same		forced by Motor driver board
@@ -9,7 +9,8 @@ Breake		D9		D8		same		forced by Motor driver board
 Current sensor	A0		A1		same.		forced by Motor driver board (not used)
 
 Arduino Board
-Pin Name	Nano	Uno	Comments
-Servo motor	7	5	make both pin 5?
-UltraSonic trig	2	2
-Ultrasonic echo	4	4	
+Pin Name					Nano	Uno		Comments
+Front Servo motor	5			5			Same pin
+Back Servo motor	6			6			Same pin
+UltraSonic trig		2			2			Same pin
+Ultrasonic echo		4			4			Same pin
