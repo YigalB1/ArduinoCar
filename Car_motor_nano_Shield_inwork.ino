@@ -40,8 +40,8 @@ const int BACKWARD  = 2;
 const int GO        = 3;
 const int LEFT      = 4;
 const int RIGHT     = 5;
-const int trigPin   = 2;  // Ultrasonic (Yellow)
-const int echoPin   = 4;  // Ultrasonic (orange)
+const int f_trigPin   = 2;  // Ultrasonic (Yellow)
+const int f_echoPin   = 4;  // Ultrasonic (orange)
 const int analog_in_pin = 2 ; // potentiometer for claibration
 
 int dist_array[SERVO_STEPS_NUM];
@@ -169,8 +169,8 @@ void setup() {
   pinMode(MOTOR_RIGHT_DIR_PIN, OUTPUT); //Initiates Motor Channel A pin
   pinMode(MOTOR_RIGHT_BREAK_PIN , OUTPUT);  //Initiates Brake Channel A pin
   // UltrSonic sensor
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  pinMode(f_trigPin, OUTPUT);
+  pinMode(f_echoPin, INPUT);
   F_servo.attach(servo_forwrd_pin);
   B_servo.attach(servo_bckwrd_pin);
 // Sep 26: eliminated. from noa on UNO & Nano has same servo pin
@@ -450,17 +450,17 @@ int readDistance() {
   int dist_t,duration_t;
 
   // Clears the trigPin
-  digitalWrite(trigPin, LOW);
+  digitalWrite(f_trigPin, LOW);
   delayMicroseconds(2);
 
   // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH);
+  digitalWrite(f_trigPin, HIGH);
 
   delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  digitalWrite(f_trigPin, LOW);
 
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration_t = pulseIn(echoPin, HIGH);
+  duration_t = pulseIn(f_echoPin, HIGH);
 
   // Calculating the distance
   dist_t = duration_t*0.034/2;
