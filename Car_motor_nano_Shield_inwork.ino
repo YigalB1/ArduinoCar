@@ -15,8 +15,8 @@ using std::string;
 #define MOTOR_RIGHT_DIR_PIN 13
 #define MOTOR_RIGHT_BREAK_PIN 8
 #define MOTOR_RIGHT_SPEED_PIN 11
-#define servo1_pin 5  // Servo1 because future pla to have two.
-                      // pin 5 is now the same for Uno and Nano
+#define servo_forwrd_pin  5      // for forward driving
+#define servo_bckwrd_pin  6  // for reverse driving
 
 #define SHORT_RANGE 20
 #define STOP_RANGE 6
@@ -48,8 +48,8 @@ int dist_array[SERVO_STEPS_NUM];
 int motor_left_speed = MOTOR_LEFT_MAX_SPEED;
 int motor_right_speed = MOTOR_RIGHT_MAX_SPEED;
 
-Servo myservo;  // create servo object to control a servo
-                // twelve servo objects can be created on most boards
+Servo F_servo;  // create servo object to control the front servo
+Servo B_servo;  // create servo object to control the back servo
 
 
 class Motor {
@@ -171,7 +171,8 @@ void setup() {
   // UltrSonic sensor
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-  myservo.attach(servo1_pin);
+  F_servo.attach(servo_forwrd_pin);
+  B_servo.attach(servo_bckwrd_pin);
 // Sep 26: eliminated. from noa on UNO & Nano has same servo pin
   //#if 1==NANO
   //  myservo.attach(7);  // Use pin 7 in case of NANO
@@ -187,7 +188,9 @@ void setup() {
     Calibrate_wheels();
   #endif
 
-  // test motors: making sure car parts are well
+servo_test(); // always test servos. Helps to determine reset
+
+  // test: making sure car parts are well
   #if TEST_MODE
     while (true) {  // just for testing
       test_motors(); // human check - if wheels move
@@ -393,7 +396,12 @@ int  scan() {
 */
 
 
-  myservo.write(90); // bring to center
+  F_servo.write(90); // bring to center
+  B_servo.write(90); // bring to center
+
+
+// TBD - need to change to F or B servo. Parameter?
+
   return readDistance();    // TBD - tmp untill array is analysed t!!!
 }
 
@@ -509,13 +517,20 @@ void servo_test() {
   #if DEBUG
     Serial.println("***** testing servo ");
   #endif
-  myservo.write(0);
+  F_servo.write(0);
+  B_servo.write(0);
   delay(2000);
-  myservo.write(90);
+  F_servo.write(90);
+  B_servo.write(90);
+  // myservo.write(90);
   delay(2000);
-  myservo.write(180);
+  F_servo.write(180);
+  B_servo.write(180);
+  //myservo.write(180);
   delay(2000);
-  myservo.write(90);
+  F_servo.write(90);
+  B_servo.write(90);
+  //myservo.write(90);
   delay(2000);
 }
 
