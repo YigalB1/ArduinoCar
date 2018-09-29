@@ -40,8 +40,11 @@ const int BACKWARD  = 2;
 const int GO        = 3;
 const int LEFT      = 4;
 const int RIGHT     = 5;
-const int f_trigPin   = 2;  // Ultrasonic (Yellow)
-const int f_echoPin   = 4;  // Ultrasonic (orange)
+const int f_trigPin   = 2;  // Front Ultrasonic (Yellow)
+const int f_echoPin   = 4;  // Front Ultrasonic (orange)
+const int b_trigPin   =10;  // Back Ultrasonic ()
+const int b_echoPin   = 7;  // Back Ultrasonic ()
+
 const int analog_in_pin = 2 ; // potentiometer for claibration
 
 int dist_array[SERVO_STEPS_NUM];
@@ -195,8 +198,8 @@ servo_test(); // always test servos. Helps to determine reset
     while (true) {  // just for testing
       test_motors(); // human check - if wheels move
       servo_test();
-      ultrasonic_test();
-      // test ultrasonic" TBD
+      ultrasonic_test(FORWARD);
+      ultrasonic_test(BACKWARD);
       delay(10000000); // wait for ever, so I could debug the results
     }
   #endif
@@ -552,7 +555,7 @@ void ultrasonic_test(int l_dir) {
   #if DEBUG
     Serial.println("***** Testing UltraSonic sensor");
     int tmp;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 20; i++) {
       tmp = readDistance(l_dir);
       Serial.println(tmp);
       delay(500);
