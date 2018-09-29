@@ -553,7 +553,11 @@ void servo_test() {
 void ultrasonic_test(int l_dir) {
   // l_dir can be FORWARD or BACKWARD
   #if DEBUG
-    Serial.println("***** Testing UltraSonic sensor");
+    if (FORWARD == l_dir)
+      Serial.println("***** FRONT Testing distance sensor");
+    else
+      Serial.println("***** REAR Testing distance sensor");
+
     int tmp;
     for (int i = 0; i < 20; i++) {
       tmp = readDistance(l_dir);
