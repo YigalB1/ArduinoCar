@@ -209,7 +209,7 @@ void loop(){
   int dir,dist,tmp;
 
   // stop(); why stopping? go on as long as you can
-  dist = scan();
+  dist = scan(FORWARD);  // TBD currently assuming going forward
   stop();
   delay(500); // TBD - remove or shorten
   dir=decide(dist);
@@ -367,7 +367,8 @@ void  stop() {
 }
 
 
-int  scan() {
+int  scan(int l_dir) {
+  // l_dir can be FORWARD or BACKWARD
   int k=0,pos,read_dist,cnt;
 
   #if DEBUG
@@ -402,7 +403,7 @@ int  scan() {
 
 // TBD - need to change to F or B servo. Parameter?
 
-  return readDistance();    // TBD - tmp untill array is analysed t!!!
+  return readDistance(l_dir);    // TBD - tmp untill array is analysed t!!!
 }
 
 
@@ -445,22 +446,33 @@ int decide_if_forward() {
 // void  go(){}
 
 
-int readDistance() {
-
+int readDistance(int l_dir) {
+  // l_dir can be FORWARD or BACKWARD
+  int trigPin,echoPin;  // local variable to hold the HW pin of ultraosnice sensor
   int dist_t,duration_t;
 
+  // set the trig pin according to the required direction
+  if ( FORWARD == l_dir ) {
+    trigPin=f_trigPin;
+    echoPin=f_echoPin;
+  }
+  else {
+    trigPin=b_trigPin;
+    echoPin=b_echoPin;
+  }
+
   // Clears the trigPin
-  digitalWrite(f_trigPin, LOW);
+  digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
 
   // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(f_trigPin, HIGH);
+  digitalWrite(trigPin, HIGH);
 
   delayMicroseconds(10);
-  digitalWrite(f_trigPin, LOW);
+  digitalWrite(trigPin, LOW);
 
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration_t = pulseIn(f_echoPin, HIGH);
+  duration_t = pulseIn(echoPin, HIGH);
 
   // Calculating the distance
   dist_t = duration_t*0.034/2;
@@ -535,12 +547,13 @@ void servo_test() {
 }
 
 
-void ultrasonic_test() {
+void ultrasonic_test(int l_dir) {
+  // l_dir can be FORWARD or BACKWARD
   #if DEBUG
     Serial.println("***** Testing UltraSonic sensor");
     int tmp;
     for (int i = 0; i < 100; i++) {
-      tmp = readDistance();
+      tmp = readDistance(l_dir);
       Serial.println(tmp);
       delay(500);
     }
