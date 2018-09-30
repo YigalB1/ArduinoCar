@@ -33,6 +33,15 @@ using std::string;
 #define CALIBRATE 0   // for calibration only, one time. 0 for normal
 #define TEST_MODE 0   // check if HW is Ok. 0 for normal
 
+#ifdef DEBUG  // makes the code more readable
+ #define DEBUG_PRINT(x)  Serial.print (x)
+ #define DEBUG_PRINTLN(x)  Serial.println (x)
+#else         // not exists if DEBUG is not defined
+ #define DEBUG_PRINT(x)
+ #define DEBUG_PRINTLN(x)
+#endif
+
+
 
 const int FORWARD   = 0;     // const value can't change
 const int STOP      = 1;
@@ -217,6 +226,7 @@ void loop(){
   delay(500); // TBD - remove or shorten
   dir=decide(dist);
 
+/*
   #if DEBUG
     Serial.println(" ");
     Serial.print("dist= ");
@@ -226,6 +236,15 @@ void loop(){
     Serial.print("steps inc= ");
     Serial.println(SERVO_STEPS_INC);
   #endif
+*/
+
+  DEBUG_PRINTLN(" ");
+  DEBUG_PRINT("dist= ");
+  DEBUG_PRINT(dist);
+  DEBUG_PRINT("  dir= ");
+  DEBUG_PRINTLN(dir);
+  DEBUG_PRINT("steps inc= ");
+  DEBUG_PRINTLN(SERVO_STEPS_INC);
 
   if (FORWARD == dir) {
     go_forward();
@@ -240,7 +259,6 @@ void loop(){
     delay(250); // make sure engines stopped
     go_forward(); // go forward again
     }
-
 }
 
 
