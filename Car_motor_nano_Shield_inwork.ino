@@ -106,25 +106,6 @@ Motor::Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd):
 void Motor::GoForward(int l_speed)
 {
 //  l_speed:      speed of motor
-
-	#if DEBUG
-    Serial.println("---------------------- ");
-    Serial.print("in motor side: ");
-    Serial.println(name);
-    Serial.print(" direction pin: ");
-    Serial.println(HIGH);
-    Serial.print(" break pin: ");
-    Serial.println(LOW);
-    Serial.print(" Speed: ");
-    Serial.println(l_speed);
-
-    Serial.print("brk_pin: ");
-    Serial.println(break_pin);
-    Serial.print("spd_pin: ");
-    Serial.println(speed_pin);
-    Serial.println("~~~~~~~~~~~~~~~~~~~ ");
-  #endif
-
   digitalWrite(dir_pin, HIGH); //set direction forward
   digitalWrite(break_pin, LOW);   //Disengage the Brake
   analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
@@ -133,34 +114,15 @@ void Motor::GoForward(int l_speed)
 void Motor::GoBackward(int l_speed)
 {
 	//  l_speed:      speed of motor
-
-	#if DEBUG
-    Serial.println("---------------------- ");
-    Serial.print("in motor side: ");
-    Serial.println(name);
-    Serial.print(" direction pin: ");
-    Serial.println(LOW);
-    Serial.print(" break pin: ");
-    Serial.println(LOW);
-    Serial.print(" Speed: ");
-    Serial.println(l_speed);
-
-    Serial.print("brk_pin: ");
-    Serial.println(break_pin);
-    Serial.print("spd_pin: ");
-    Serial.println(speed_pin);
-    Serial.println("~~~~~~~~~~~~~~~~~~~ ");
-  #endif
-
 	digitalWrite(dir_pin, LOW); //set direction backwards
 	digitalWrite(break_pin, LOW);   //Disengage the Brake
   analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
 }
 
-
 void Motor::Stop()
 {
-	digitalWrite(break_pin, HIGH);  //Engage the Brake
+	digitalWrite(break_pin, HIGH);   //Engage the Brake
+  analogWrite(speed_pin, 0);       //set speed to zero
 }
 
 
@@ -171,31 +133,28 @@ int Motor::Get_Speed()
 
 
 //******************* PRE-SETUP - CREATE MOTORS ************************
-
 Motor motor_left(LEFT, MOTOR_LEFT_DIR_PIN, MOTOR_LEFT_BREAK_PIN, MOTOR_LEFT_SPEED_PIN, MOTOR_LEFT_MAX_SPEED);
 Motor motor_right(RIGHT, MOTOR_RIGHT_DIR_PIN, MOTOR_RIGHT_BREAK_PIN, MOTOR_RIGHT_SPEED_PIN, MOTOR_RIGHT_MAX_SPEED);
 
-//******************* SETUP ************************
 
+//******************* SETUP ************************
 void setup() {
 
-  //Setup Channel A
+  //Setup Channel A (Left)
   pinMode(MOTOR_LEFT_DIR_PIN, OUTPUT); //Initiates Motor Channel A pin
   pinMode(MOTOR_LEFT_BREAK_PIN, OUTPUT); //Initiates Brake Channel A pin
-  //Setup Channel B
+  //Setup Channel B (Right)
   pinMode(MOTOR_RIGHT_DIR_PIN, OUTPUT); //Initiates Motor Channel A pin
   pinMode(MOTOR_RIGHT_BREAK_PIN , OUTPUT);  //Initiates Brake Channel A pin
   // UltrSonic sensor
   pinMode(f_trigPin, OUTPUT);
   pinMode(f_echoPin, INPUT);
+  pinMode(b_trigPin, OUTPUT);
+  pinMode(b_echoPin, INPUT);
+  // create Front and Back Servos entities
   F_servo.attach(servo_forwrd_pin);
   B_servo.attach(servo_bckwrd_pin);
-// Sep 26: eliminated. from noa on UNO & Nano has same servo pin
-  //#if 1==NANO
-  //  myservo.attach(7);  // Use pin 7 in case of NANO
-  //#else
-  //  myservo.attach(5);  // Use pin 5 in case of UNO
-  //#endif
+
 
 car_direction = FORWARD;
 cng_dir = false;
@@ -231,12 +190,12 @@ void loop(){
 
   if (cng_dir) {
     if (FORWARD == car_direction)
-      car_direction = BACKWARD
+      car_direction = BACKWARD;
     else
-      car_direction = FORWARD
+      car_direction = FORWARD;
     cng_dir = false;
     stop();
-    wait(1000);
+    delay(1000);
   }
 
   if ( FORWARD == car_direction)   // keep going same direction as before
@@ -251,40 +210,11 @@ void loop(){
   if ( CNG_DIRECTION == decide(dist) )
     cng_dir = true;
 
-/*
-  #if DEBUG
-    Serial.println(" ");
-    Serial.print("dist= ");
-    Serial.print(dist);
-    Serial.print("  dir= ");
-    Serial.println(dir);
-    Serial.print("steps inc= ");
-    Serial.println(SERVO_STEPS_INC);
-  #endif
-*/
-
   DEBUG_PRINTLN(" ");
   DEBUG_PRINT("dist= ");
   DEBUG_PRINT(dist);
   DEBUG_PRINT("  car_direction= ");
   DEBUG_PRINTLN(car_direction);
-  
-
-/*
-  if (FORWARD == dir) {
-    go_forward();
-    delay(1000); // drive for 1 seconds
-    }
-  else {
-    stop();
-    delay(500);
-    go_backward();
-    delay(2000); // get back from the obsticle
-    stop();
-    delay(250); // make sure engines stopped
-    go_forward(); // go forward again
-    }
-*/
 
 }
 
