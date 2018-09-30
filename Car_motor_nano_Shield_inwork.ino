@@ -23,6 +23,9 @@ using std::string;
 #define SERVO_STEPS_NUM 10
 #define SERVO_STEPS_INC 180 / SERVO_STEPS_NUM
 
+#define SAME_DIRECTION  0
+#define CNG_DIRECTION   1
+
 #define MOTOR_LEFT_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
 #define MOTOR_RIGHT_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
 
@@ -59,6 +62,8 @@ const int analog_in_pin = 2 ; // potentiometer for claibration
 int dist_array[SERVO_STEPS_NUM];
 int motor_left_speed = MOTOR_LEFT_MAX_SPEED;
 int motor_right_speed = MOTOR_RIGHT_MAX_SPEED;
+int car_direction;  // Can be forward or backwards. TBD other directions?
+bool cng_dir ;      // kee[ [revious direction or change?
 
 Servo F_servo;  // create servo object to control the front servo
 Servo B_servo;  // create servo object to control the back servo
@@ -192,6 +197,10 @@ void setup() {
   //  myservo.attach(5);  // Use pin 5 in case of UNO
   //#endif
 
+car_direction = FORWARD;
+cng_dir = false;
+
+
   #if DEBUG
     Serial.begin(9600);
   #endif
@@ -218,13 +227,29 @@ servo_test(); // always test servos. Helps to determine reset
 
 //******************* LOOP ************************
 void loop(){
-  int dir,dist,tmp;
+  int new_dir,dist,tmp;
 
-  // stop(); why stopping? go on as long as you can
-  dist = scan(FORWARD);  // TBD currently assuming going forward
-  stop();
-  delay(500); // TBD - remove or shorten
-  dir=decide(dist);
+  if (cng_dir) {
+    if (FORWARD == car_direction)
+      car_direction = BACKWARD
+    else
+      car_direction = FORWARD
+    cng_dir = false;
+    stop();
+    wait(1000);
+  }
+
+  if ( FORWARD == car_direction)   // keep going same direction as before
+    go_forward();
+  else
+    go_backward();
+
+  dist = scan(car_direction);  // Scan if no obsticle
+  // stop();
+  //delay(500); // TBD - remove or shorten
+  //dir=decide(dist);
+  if ( CNG_DIRECTION == decide(dist) )
+    cng_dir = true;
 
 /*
   #if DEBUG
@@ -241,11 +266,11 @@ void loop(){
   DEBUG_PRINTLN(" ");
   DEBUG_PRINT("dist= ");
   DEBUG_PRINT(dist);
-  DEBUG_PRINT("  dir= ");
-  DEBUG_PRINTLN(dir);
-  DEBUG_PRINT("steps inc= ");
-  DEBUG_PRINTLN(SERVO_STEPS_INC);
+  DEBUG_PRINT("  car_direction= ");
+  DEBUG_PRINTLN(car_direction);
+  
 
+/*
   if (FORWARD == dir) {
     go_forward();
     delay(1000); // drive for 1 seconds
@@ -259,6 +284,8 @@ void loop(){
     delay(250); // make sure engines stopped
     go_forward(); // go forward again
     }
+*/
+
 }
 
 
@@ -431,16 +458,19 @@ int  scan(int l_dir) {
 int  decide(int l_dist) {
   int decision;
 
-  #if DEBUG
-    Serial.print("in decide.");
-  #endif
+  //#if DEBUG
+  //  Serial.print("in decide.");
+  //#endif
+
+DEBUG_PRINTLN("in decide function");
+
   // if (decide_if_forward()) TBD - use one measure now. later full scan.
   if (STOP_RANGE < l_dist)
-  	decision = FORWARD;
+  	decision = SAME_DIRECTION;
   else {
   	stop();
   	delay(300);
-  	decision = BACKWARD;
+  	decision = CNG_DIRECTION;
   }
 
   return decision;
