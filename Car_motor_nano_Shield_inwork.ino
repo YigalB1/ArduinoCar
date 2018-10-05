@@ -19,7 +19,7 @@ using std::string;
 #define servo_bckwrd_pin  6  // for reverse driving
 
 #define SHORT_RANGE 20
-#define STOP_RANGE 6
+#define STOP_RANGE 15
 #define SERVO_STEPS_NUM 10
 #define SERVO_STEPS_INC 180 / SERVO_STEPS_NUM
 
