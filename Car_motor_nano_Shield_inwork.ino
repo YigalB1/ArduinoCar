@@ -220,56 +220,7 @@ void loop(){
 
 
 // ********************** end of LOOP ***************************
-/*
-void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
-{
 
-//  l_side:       left or right
-//  l_dir_pin:    hardware direction pin
-//  l_break_pin:  hardware break pin
-//  l_speed:      speed of motor
-
-  #if DEBUG
-    Serial.println("---------------------- ");
-    Serial.print("in motor_go, side: ");
-    Serial.println(l_side);
-    Serial.print(" direction pin: ");
-    Serial.println(l_dir_pin);
-    Serial.print(" break pin: ");
-    Serial.println(l_break_pin);
-    Serial.print(" Speed: ");
-    Serial.println(l_speed);
-  #endif
-
-  int left_or_right, brk_pin, spd_pin;
-  if (RIGHT == l_side) {
-    Serial.print("*** in RIGHT side ");
-    left_or_right = MOTOR_RIGHT_DIR_PIN;
-    brk_pin = MOTOR_RIGHT_BREAK_PIN;
-    spd_pin = MOTOR_RIGHT_SPEED_PIN;
-  }
-  else {
-    Serial.print("*** in LEFT side ");
-    left_or_right = MOTOR_LEFT_DIR_PIN;
-    brk_pin = MOTOR_LEFT_BREAK_PIN;
-    spd_pin = MOTOR_LEFT_SPEED_PIN;
-  }
-
-  #if DEBUG
-    Serial.print("left_or_right: ");
-    Serial.println(left_or_right);
-    Serial.print("brk_pin: ");
-    Serial.println(brk_pin);
-    Serial.print("spd_pin: ");
-    Serial.println(spd_pin);
-    Serial.println("~~~~~~~~~~~~~~~~~~~ ");
-  #endif
-
-  digitalWrite(left_or_right, l_dir_pin); //set direction forward or backwards
-  digitalWrite(brk_pin, LOW);   //Disengage the Brake for Channel A
-  analogWrite(spd_pin, l_speed);   //Spins the motor on Channel A at full speed
-
-}
 */
 
 
@@ -280,20 +231,9 @@ void go_forward()
     Serial.println("in go_forward");
   #endif
 
-/*
-  //Motor A forward @ full speed
 
-  digitalWrite(MOTOR_LEFT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
-  digitalWrite(MOTOR_LEFT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
-  analogWrite(MOTOR_LEFT_SPEED_PIN, motor_left_speed);   //Spins the motor on Channel A at full speed
-*/
   motor_left.GoForward(motor_left.Get_Speed());
-/*
-  //Motor B forward @ full speed
-  digitalWrite(MOTOR_RIGHT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
-  digitalWrite(MOTOR_RIGHT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
-  analogWrite(MOTOR_RIGHT_SPEED_PIN, motor_right_speed);   //Spins the motor on Channel A at full speed
-*/
+
   motor_right.GoForward(motor_right.Get_Speed());
 }
 
@@ -323,25 +263,17 @@ void go_left()
   #endif
 
 motor_left.GoForward(MOTOR_LEFT_MAX_SPEED/2); // slower than right. to turn left
-/*
-  //Motor B forward @ half speed
-  digitalWrite(MOTOR_RIGHT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
-  digitalWrite(MOTOR_RIGHT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
-  analogWrite(MOTOR_RIGHT_SPEED_PIN, 123);   //Spins the motor on Channel A at half speed
-*/
 motor_right.GoForward(MOTOR_RIGHT_MAX_SPEED); // faster than left. to go left
 }
 
 
 void  stop() {
-
   #if DEBUG
     Serial.println("in stop");
   #endif
 
 	motor_left.Stop();
   motor_right.Stop();
-
 }
 
 
@@ -457,20 +389,6 @@ int readDistance(int l_dir) {
 
   // Calculating the distance
   dist_t = duration_t*0.034/2;
-
-
-  #if DEBUG
-   //Serial.print("in read distance: ");
-   //Serial.print("trigPin: ");
-   //Serial.print(trigPin);
-   //Serial.print("echoPin: ");
-   //Serial.println(echoPin);
-   //Serial.print("duration_t= ");
-   //Serial.print(duration_t);
-   //Serial.print("dist_t= ");
-   //Serial.println(dist_t);
-  #endif
-
   return(dist_t);
 }
 
