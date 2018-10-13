@@ -3,7 +3,7 @@ Arduino car
 *************************************************************/
 #include <Servo.h>
 
-#include "car_motors"
+#include "car_motors.h  "
 
 /*
 #include <string>
@@ -314,7 +314,7 @@ int  scan(int l_dir) {
 // TBD - need to change to F or B servo. Parameter?
 
   //return readDistance(l_dir);    // TBD - tmp untill array is analysed t!!!
-  return min ; 
+  return min ;
 }
 
 
