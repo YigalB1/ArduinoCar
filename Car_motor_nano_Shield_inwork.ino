@@ -285,7 +285,7 @@ int  scan(int l_dir) {
       return i;     // if too close to obsticle, go back immediately
     dist_array[cnt] = i;
     if ( dist_array[cnt] < min )
-      min = dist_array[pos];
+      min = dist_array[cnt];
 
   cnt++;
   };
