@@ -267,16 +267,19 @@ int  scan(int l_dir) {
 
   DEBUG_PRINTLN(">>> in scan");
 
+  if ( FORWARD == l_dir )  // use the front or back servo according to direction
+      current_servo = F_servo;
+  else
+      current_servo = B_servo;
+
   min=max_dist;
   cnt=0;
+
+  for (pos = 0; pos <SERVO_STEPS_NUM ; pos++)
+    dist_array[pos] = max_dist ; // peset the array
+
   for (pos = 90 - scan_angle; pos <= scan_angle + 90 ; pos += scan_steps) {
-
-    if ( FORWARD == l_dir )  // use the front or back servo according to direction
-        current_servo = F_servo;
-    else
-        current_servo = B_servo;
-
-    current_servo.write(90); // bring to center
+    current_servo.write(pos); // bring to center
     dist_array[cnt] = readDistance(l_dir);
     if ( dist_array[cnt] < min )
       min = dist_array[pos];
