@@ -1,0 +1,23 @@
+Arduino CAR Pinout:
+
+Motor driver Board
+Pin Name
+		Ch A (left)	Ch B (right)	Nano	Uno		Comments
+Ch A (Left)		Direction				D12		D12		forced by Motor driver board
+Ch B (Right)	Direction				D13		D13		forced by Motor driver board
+Ch A (left)		PWM (speed)			D3		D3		forced by Motor driver board
+Ch B (Right)	PWM (speed)			D11		D11		forced by Motor driver board
+Ch A (left)		Breake					D9		D9		forced by Motor driver board
+Ch B (Right)	Breake					D8		D8		forced by Motor driver board
+Ch A (left)		Current sensor	A0		A0		forced by Motor driver board
+Ch B (Right)	Current sensor	A1		A1		forced by Motor driver board
+
+
+Arduino Board
+Pin Name								Nano		Uno		Comments
+Front Servo motor				D5			D5			Same pin
+Back Servo motor				D6			TBD			Same pin
+Front UltraSonic trig		D2			D2			Same pin
+Front Ultrasonic echo		D4			D4			Same pin
+Back UltraSonic trig		D10			TBD			Same pin
+Back Ultrasonic echo		D7			TBD			Same pin
