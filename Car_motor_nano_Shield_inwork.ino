@@ -286,8 +286,8 @@ int  scan(int l_dir) {
     dist_array[cnt] = i;
     if ( dist_array[cnt] < min )
       min = dist_array[cnt];
-
-  cnt++;
+    delay(300); // to allow set for the servo
+    cnt++;
   };
 
 
