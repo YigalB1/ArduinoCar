@@ -259,7 +259,28 @@ void  stop() {
 int  scan(int l_dir) {
   // l_dir can be FORWARD or BACKWARD
   int k=0,pos,read_dist,cnt;
+  int scan_angle = 30 ; // TND make it a define
+  int scan_steps = 15 ; // TND make it a define (exists)
+  int max_dist = 120 ; // I was sure such const exists.. TBD #define
+
   DEBUG_PRINTLN(">>> in scan");
+
+  min=max_dist;
+  cnt=0;
+  for (pos = 90 - scan_angle; pos <= scan_angle + 90 ; pos += scan_steps) {
+
+    if ( LEFT == l_dir )  // use the front or back servo according to direction
+        current_servo = F_servo;
+    else
+        current_servo = B_servo;
+
+    current_servo.write(90); // bring to center
+    dist_array[cnt] = readDistance();
+    if ( dist_array[cnt] < min )
+      min = dist_array[pos];
+
+  cnt++;
+  };
 
 
 // TBD - as for now, look only forward , until car is stable
@@ -284,13 +305,16 @@ int  scan(int l_dir) {
 */
 
 
+
+
   F_servo.write(90); // bring to center
   B_servo.write(90); // bring to center
 
 
 // TBD - need to change to F or B servo. Parameter?
 
-  return readDistance(l_dir);    // TBD - tmp untill array is analysed t!!!
+  //return readDistance(l_dir);    // TBD - tmp untill array is analysed t!!!
+  return min ; 
 }
 
 
