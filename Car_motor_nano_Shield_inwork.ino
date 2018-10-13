@@ -459,7 +459,7 @@ void ultrasonic_test(int l_dir) {
     if (FORWARD == l_dir)
       DEBUG_PRINTLN("***** FRONT Testing distance sensor");
     else
-      DEBUG_PRINTLN("***** FRONT Testing distance sensor");
+      DEBUG_PRINTLN("***** BACK  Testing distance sensor");
 
     int tmp;
     for (int i = 0; i < 20; i++) {
