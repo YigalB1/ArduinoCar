@@ -19,8 +19,8 @@ using std::string;
 #define servo_forwrd_pin  5      // for forward driving
 #define servo_bckwrd_pin  6  // for reverse driving
 
-#define SHORT_RANGE 20
-#define STOP_RANGE 15
+#define SHORT_RANGE 30
+#define STOP_RANGE 20
 #define SERVO_STEPS_NUM 10
 #define SERVO_STEPS_INC 180 / SERVO_STEPS_NUM
 
@@ -258,7 +258,7 @@ void  stop() {
 
 int  scan(int l_dir) {
   // l_dir can be FORWARD or BACKWARD
-  int k=0,pos,read_dist,cnt;
+  int k=0,pos,read_dist,cnt,i;
   int scan_angle = 30 ; // TND make it a define
   int scan_steps = 15 ; // TND make it a define (exists)
   int max_dist = 120 ; // I was sure such const exists.. TBD #define
@@ -279,8 +279,11 @@ int  scan(int l_dir) {
     dist_array[pos] = max_dist ; // peset the array
 
   for (pos = 90 - scan_angle; pos <= scan_angle + 90 ; pos += scan_steps) {
-    current_servo.write(pos); // bring to center
-    dist_array[cnt] = readDistance(l_dir);
+    current_servo.write(pos); // bring to position
+    i = readDistance(l_dir);
+    if ( i < STOP_RANGE )
+      return i;     // if too close to obsticle, go back immediately
+    dist_array[cnt] = i;
     if ( dist_array[cnt] < min )
       min = dist_array[pos];
 
@@ -319,7 +322,7 @@ int  scan(int l_dir) {
 // TBD - need to change to F or B servo. Parameter?
 
   //return readDistance(l_dir);    // TBD - tmp untill array is analysed t!!!
-  return min ;
+  return min ; // the shortest distance detected
 }
 
 
