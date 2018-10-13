@@ -3,7 +3,7 @@ Arduino car
 *************************************************************/
 #include <Servo.h>
 
-#include "car_motors.h  "
+#include "car_motors.h"
 
 /*
 #include <string>
@@ -262,7 +262,8 @@ int  scan(int l_dir) {
   int scan_angle = 30 ; // TND make it a define
   int scan_steps = 15 ; // TND make it a define (exists)
   int max_dist = 120 ; // I was sure such const exists.. TBD #define
-  int min ; // temp variable 
+  int min ; // temp variable
+  Servo current_servo;
 
   DEBUG_PRINTLN(">>> in scan");
 
@@ -270,13 +271,13 @@ int  scan(int l_dir) {
   cnt=0;
   for (pos = 90 - scan_angle; pos <= scan_angle + 90 ; pos += scan_steps) {
 
-    if ( LEFT == l_dir )  // use the front or back servo according to direction
+    if ( FORWARD == l_dir )  // use the front or back servo according to direction
         current_servo = F_servo;
     else
         current_servo = B_servo;
 
     current_servo.write(90); // bring to center
-    dist_array[cnt] = readDistance();
+    dist_array[cnt] = readDistance(l_dir);
     if ( dist_array[cnt] < min )
       min = dist_array[pos];
 
