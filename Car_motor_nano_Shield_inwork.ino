@@ -66,74 +66,9 @@ int motor_right_speed = MOTOR_RIGHT_MAX_SPEED;
 int car_direction;  // Can be forward or backwards. TBD other directions?
 bool cng_dir ;      // kee[ [revious direction or change?
 
+//  pre-setp, create servos and motors
 Servo F_servo;  // create servo object to control the front servo
 Servo B_servo;  // create servo object to control the back servo
-
-/*
-class Motor {
-public:
-  Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd);
-  ~Motor() {  }
-
-  void GoForward(int l_speed);
-  void GoBackward(int l_speed);
-  void Stop();
-  int Get_Speed();
-private:
-	const int name;
-  const int dir_pin;
-  const int break_pin;
-  const int speed_pin;
-  const int max_speed;
-
-  int speed;
-
-  // object can't be copied
-  Motor(const Motor& m);
-  Motor& operator=(const Motor& m);
-};
-
-Motor::Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd):
-	name(m_name),
-	dir_pin(dir_p),
-	break_pin(brk_p),
-	speed_pin(spd_p),
-	max_speed(max_spd)
-{
-	speed = max_spd;
-}
-
-
-void Motor::GoForward(int l_speed)
-{
-//  l_speed:      speed of motor
-  digitalWrite(dir_pin, HIGH); //set direction forward
-  digitalWrite(break_pin, LOW);   //Disengage the Brake
-  analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
-}
-
-void Motor::GoBackward(int l_speed)
-{
-	//  l_speed:      speed of motor
-	digitalWrite(dir_pin, LOW); //set direction backwards
-	digitalWrite(break_pin, LOW);   //Disengage the Brake
-  analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
-}
-
-void Motor::Stop()
-{
-	digitalWrite(break_pin, HIGH);   //Engage the Brake
-  analogWrite(speed_pin, 0);       //set speed to zero
-}
-
-
-int Motor::Get_Speed()
-{
-	return speed;
-}
-*/
-
-//******************* PRE-SETUP - CREATE MOTORS ************************
 Motor motor_left(LEFT, MOTOR_LEFT_DIR_PIN, MOTOR_LEFT_BREAK_PIN, MOTOR_LEFT_SPEED_PIN, MOTOR_LEFT_MAX_SPEED);
 Motor motor_right(RIGHT, MOTOR_RIGHT_DIR_PIN, MOTOR_RIGHT_BREAK_PIN, MOTOR_RIGHT_SPEED_PIN, MOTOR_RIGHT_MAX_SPEED);
 
@@ -155,11 +90,8 @@ void setup() {
   // create Front and Back Servos entities
   F_servo.attach(servo_forwrd_pin);
   B_servo.attach(servo_bckwrd_pin);
-
-
-car_direction = FORWARD;
-cng_dir = false;
-
+  car_direction = FORWARD;
+  cng_dir = false;
 
   #if DEBUG
     Serial.begin(9600);
@@ -211,7 +143,7 @@ void loop(){
     cng_dir = true;
 
   DEBUG_PRINTLN(" ");
-  DEBUG_PRINT("dist= ");
+  DEBUG_PRINT("in loop, dist= ");
   DEBUG_PRINT(dist);
   DEBUG_PRINT("  car_direction= ");
   DEBUG_PRINTLN(car_direction);
@@ -290,38 +222,9 @@ int  scan(int l_dir) {
     cnt++;
   };
 
-
-// TBD - as for now, look only forward , until car is stable
-/*
-  for (pos = 0; pos < SERVO_STEPS_NUM; pos += 1) {
-  //for (pos = 0; pos <= 180; pos += 10) { // from 0 degrees to 180 degrees in steps of 10 degree
-    myservo.write(pos * SERVO_STEPS_INC);              // tell servo to go to position in variable 'pos'
-    delay(500);                       // waits 15ms for the servo to reach the position
-
-    read_dist = readDistance();
-
-    dist_array[pos] = read_dist;
-
-    // TBD read into array using k variable
-    // currently - return something
-    #if DEBUG
-      Serial.print("distance: ");
-      Serial.println(read_dist);
-    #endif
-
-    }
-*/
-
-
-
-
   F_servo.write(90); // bring to center
   B_servo.write(90); // bring to center
 
-
-// TBD - need to change to F or B servo. Parameter?
-
-  //return readDistance(l_dir);    // TBD - tmp untill array is analysed t!!!
   return min ; // the shortest distance detected
 }
 
