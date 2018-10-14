@@ -15,11 +15,16 @@ using std::string;
 #define MOTOR_RIGHT_DIR_PIN 13
 #define MOTOR_RIGHT_BREAK_PIN 8
 #define MOTOR_RIGHT_SPEED_PIN 11
+#define servo_forwrd_pin  5      // for forward driving
+#define servo_bckwrd_pin  6  // for reverse driving
 
 #define SHORT_RANGE 20
-#define STOP_RANGE 6
+#define STOP_RANGE 15
 #define SERVO_STEPS_NUM 10
 #define SERVO_STEPS_INC 180 / SERVO_STEPS_NUM
+
+#define SAME_DIRECTION  0
+#define CNG_DIRECTION   1
 
 #define MOTOR_LEFT_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
 #define MOTOR_RIGHT_MAX_SPEED 255 // max is 255. should be lower if calibrated needed
@@ -31,6 +36,15 @@ using std::string;
 #define CALIBRATE 0   // for calibration only, one time. 0 for normal
 #define TEST_MODE 0   // check if HW is Ok. 0 for normal
 
+#ifdef DEBUG  // makes the code more readable
+ #define DEBUG_PRINT(x)  Serial.print (x)
+ #define DEBUG_PRINTLN(x)  Serial.println (x)
+#else         // not exists if DEBUG is not defined
+ #define DEBUG_PRINT(x)
+ #define DEBUG_PRINTLN(x)
+#endif
+
+
 
 const int FORWARD   = 0;     // const value can't change
 const int STOP      = 1;
@@ -38,16 +52,21 @@ const int BACKWARD  = 2;
 const int GO        = 3;
 const int LEFT      = 4;
 const int RIGHT     = 5;
-const int trigPin   = 2;  // Ultrasonic (Yellow)
-const int echoPin   = 4;  // Ultrasonic (orange)
+const int f_trigPin   = 2;  // Front Ultrasonic (Yellow)
+const int f_echoPin   = 4;  // Front Ultrasonic (orange)
+const int b_trigPin   =10;  // Back Ultrasonic ()
+const int b_echoPin   = 7;  // Back Ultrasonic ()
+
 const int analog_in_pin = 2 ; // potentiometer for claibration
 
 int dist_array[SERVO_STEPS_NUM];
 int motor_left_speed = MOTOR_LEFT_MAX_SPEED;
 int motor_right_speed = MOTOR_RIGHT_MAX_SPEED;
+int car_direction;  // Can be forward or backwards. TBD other directions?
+bool cng_dir ;      // kee[ [revious direction or change?
 
-Servo myservo;  // create servo object to control a servo
-                // twelve servo objects can be created on most boards
+Servo F_servo;  // create servo object to control the front servo
+Servo B_servo;  // create servo object to control the back servo
 
 
 class Motor {
@@ -87,25 +106,6 @@ Motor::Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd):
 void Motor::GoForward(int l_speed)
 {
 //  l_speed:      speed of motor
-
-	#if DEBUG
-    Serial.println("---------------------- ");
-    Serial.print("in motor side: ");
-    Serial.println(name);
-    Serial.print(" direction pin: ");
-    Serial.println(HIGH);
-    Serial.print(" break pin: ");
-    Serial.println(LOW);
-    Serial.print(" Speed: ");
-    Serial.println(l_speed);
-
-    Serial.print("brk_pin: ");
-    Serial.println(break_pin);
-    Serial.print("spd_pin: ");
-    Serial.println(speed_pin);
-    Serial.println("~~~~~~~~~~~~~~~~~~~ ");
-  #endif
-
   digitalWrite(dir_pin, HIGH); //set direction forward
   digitalWrite(break_pin, LOW);   //Disengage the Brake
   analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
@@ -114,34 +114,15 @@ void Motor::GoForward(int l_speed)
 void Motor::GoBackward(int l_speed)
 {
 	//  l_speed:      speed of motor
-
-	#if DEBUG
-    Serial.println("---------------------- ");
-    Serial.print("in motor side: ");
-    Serial.println(name);
-    Serial.print(" direction pin: ");
-    Serial.println(LOW);
-    Serial.print(" break pin: ");
-    Serial.println(LOW);
-    Serial.print(" Speed: ");
-    Serial.println(l_speed);
-
-    Serial.print("brk_pin: ");
-    Serial.println(break_pin);
-    Serial.print("spd_pin: ");
-    Serial.println(speed_pin);
-    Serial.println("~~~~~~~~~~~~~~~~~~~ ");
-  #endif
-
 	digitalWrite(dir_pin, LOW); //set direction backwards
 	digitalWrite(break_pin, LOW);   //Disengage the Brake
   analogWrite(speed_pin, l_speed);   //Spins the motor l_speed speed
 }
 
-
 void Motor::Stop()
 {
-	digitalWrite(break_pin, HIGH);  //Engage the Brake
+	digitalWrite(break_pin, HIGH);   //Engage the Brake
+  analogWrite(speed_pin, 0);       //set speed to zero
 }
 
 
@@ -152,29 +133,32 @@ int Motor::Get_Speed()
 
 
 //******************* PRE-SETUP - CREATE MOTORS ************************
-
 Motor motor_left(LEFT, MOTOR_LEFT_DIR_PIN, MOTOR_LEFT_BREAK_PIN, MOTOR_LEFT_SPEED_PIN, MOTOR_LEFT_MAX_SPEED);
 Motor motor_right(RIGHT, MOTOR_RIGHT_DIR_PIN, MOTOR_RIGHT_BREAK_PIN, MOTOR_RIGHT_SPEED_PIN, MOTOR_RIGHT_MAX_SPEED);
 
-//******************* SETUP ************************
 
+//******************* SETUP ************************
 void setup() {
 
-  //Setup Channel A
+  //Setup Channel A (Left)
   pinMode(MOTOR_LEFT_DIR_PIN, OUTPUT); //Initiates Motor Channel A pin
   pinMode(MOTOR_LEFT_BREAK_PIN, OUTPUT); //Initiates Brake Channel A pin
-  //Setup Channel B
+  //Setup Channel B (Right)
   pinMode(MOTOR_RIGHT_DIR_PIN, OUTPUT); //Initiates Motor Channel A pin
   pinMode(MOTOR_RIGHT_BREAK_PIN , OUTPUT);  //Initiates Brake Channel A pin
   // UltrSonic sensor
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  pinMode(f_trigPin, OUTPUT);
+  pinMode(f_echoPin, INPUT);
+  pinMode(b_trigPin, OUTPUT);
+  pinMode(b_echoPin, INPUT);
+  // create Front and Back Servos entities
+  F_servo.attach(servo_forwrd_pin);
+  B_servo.attach(servo_bckwrd_pin);
 
-  #if 1==NANO
-    myservo.attach(7);  // Use pin 7 in case of NANO
-  #else
-    myservo.attach(5);  // Use pin 5 in case of UNO
-  #endif
+
+car_direction = FORWARD;
+cng_dir = false;
+
 
   #if DEBUG
     Serial.begin(9600);
@@ -184,13 +168,15 @@ void setup() {
     Calibrate_wheels();
   #endif
 
-  // test motors: making sure car parts are well
+servo_test(); // always test servos. Helps to determine reset
+
+  // test: making sure car parts are well
   #if TEST_MODE
     while (true) {  // just for testing
       test_motors(); // human check - if wheels move
       servo_test();
-      ultrasonic_test();
-      // test ultrasonic" TBD
+      ultrasonic_test(FORWARD);
+      ultrasonic_test(BACKWARD);
       delay(10000000); // wait for ever, so I could debug the results
     }
   #endif
@@ -200,37 +186,35 @@ void setup() {
 
 //******************* LOOP ************************
 void loop(){
-  int dir,dist,tmp;
+  int new_dir,dist,tmp;
 
-  // stop(); why stopping? go on as long as you can
-  dist = scan();
-  stop();
-  delay(500); // TBD - remove or shorten
-  dir=decide(dist);
+  if (cng_dir) {
+    if (FORWARD == car_direction)
+      car_direction = BACKWARD;
+    else
+      car_direction = FORWARD;
+    cng_dir = false;
+    stop();
+    delay(1000);
+  }
 
-  #if DEBUG
-    Serial.println(" ");
-    Serial.print("dist= ");
-    Serial.print(dist);
-    Serial.print("  dir= ");
-    Serial.println(dir);
-    Serial.print("steps inc= ");
-    Serial.println(SERVO_STEPS_INC);
-  #endif
-
-  if (FORWARD == dir) {
+  if ( FORWARD == car_direction)   // keep going same direction as before
     go_forward();
-    delay(1000); // drive for 1 seconds
-    }
-  else {
-    stop();
-    delay(500);
+  else
     go_backward();
-    delay(2000); // get back from the obsticle
-    stop();
-    delay(250); // make sure engines stopped
-    go_forward(); // go forward again
-    }
+
+  dist = scan(car_direction);  // Scan if no obsticle
+  // stop();
+  //delay(500); // TBD - remove or shorten
+  //dir=decide(dist);
+  if ( CNG_DIRECTION == decide(dist) )
+    cng_dir = true;
+
+  DEBUG_PRINTLN(" ");
+  DEBUG_PRINT("dist= ");
+  DEBUG_PRINT(dist);
+  DEBUG_PRINT("  car_direction= ");
+  DEBUG_PRINTLN(car_direction);
 
 }
 
@@ -361,7 +345,8 @@ void  stop() {
 }
 
 
-int  scan() {
+int  scan(int l_dir) {
+  // l_dir can be FORWARD or BACKWARD
   int k=0,pos,read_dist,cnt;
 
   #if DEBUG
@@ -390,24 +375,32 @@ int  scan() {
 */
 
 
-  myservo.write(90); // bring to center
-  return readDistance();    // TBD - tmp untill array is analysed t!!!
+  F_servo.write(90); // bring to center
+  B_servo.write(90); // bring to center
+
+
+// TBD - need to change to F or B servo. Parameter?
+
+  return readDistance(l_dir);    // TBD - tmp untill array is analysed t!!!
 }
 
 
 int  decide(int l_dist) {
   int decision;
 
-  #if DEBUG
-    Serial.print("in decide.");
-  #endif
+  //#if DEBUG
+  //  Serial.print("in decide.");
+  //#endif
+
+DEBUG_PRINTLN("in decide function");
+
   // if (decide_if_forward()) TBD - use one measure now. later full scan.
   if (STOP_RANGE < l_dist)
-  	decision = FORWARD;
+  	decision = SAME_DIRECTION;
   else {
   	stop();
   	delay(300);
-  	decision = BACKWARD;
+  	decision = CNG_DIRECTION;
   }
 
   return decision;
@@ -434,9 +427,20 @@ int decide_if_forward() {
 // void  go(){}
 
 
-int readDistance() {
-
+int readDistance(int l_dir) {
+  // l_dir can be FORWARD or BACKWARD
+  int trigPin,echoPin;  // local variable to hold the HW pin of ultraosnice sensor
   int dist_t,duration_t;
+
+  // set the trig pin according to the required direction
+  if ( FORWARD == l_dir ) {
+    trigPin=f_trigPin;
+    echoPin=f_echoPin;
+  }
+  else {
+    trigPin=b_trigPin;
+    echoPin=b_echoPin;
+  }
 
   // Clears the trigPin
   digitalWrite(trigPin, LOW);
@@ -506,23 +510,35 @@ void servo_test() {
   #if DEBUG
     Serial.println("***** testing servo ");
   #endif
-  myservo.write(0);
+  F_servo.write(0);
+  B_servo.write(0);
   delay(2000);
-  myservo.write(90);
+  F_servo.write(90);
+  B_servo.write(90);
+  // myservo.write(90);
   delay(2000);
-  myservo.write(180);
+  F_servo.write(180);
+  B_servo.write(180);
+  //myservo.write(180);
   delay(2000);
-  myservo.write(90);
+  F_servo.write(90);
+  B_servo.write(90);
+  //myservo.write(90);
   delay(2000);
 }
 
 
-void ultrasonic_test() {
+void ultrasonic_test(int l_dir) {
+  // l_dir can be FORWARD or BACKWARD
   #if DEBUG
-    Serial.println("***** Testing UltraSonic sensor");
+    if (FORWARD == l_dir)
+      Serial.println("***** FRONT Testing distance sensor");
+    else
+      Serial.println("***** REAR Testing distance sensor");
+
     int tmp;
-    for (int i = 0; i < 100; i++) {
-      tmp = readDistance();
+    for (int i = 0; i < 20; i++) {
+      tmp = readDistance(l_dir);
       Serial.println(tmp);
       delay(500);
     }
