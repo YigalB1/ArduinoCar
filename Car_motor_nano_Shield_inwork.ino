@@ -1,6 +1,5 @@
 /*************************************************************
-Motor Shield 1-Channel DC Motor Demo
-http://www.instructables.com/id/Arduino-Motor-Shield-Tutorial/
+Arduino car
 *************************************************************/
 #include <Servo.h>
 
@@ -180,7 +179,6 @@ servo_test(); // always test servos. Helps to determine reset
       delay(10000000); // wait for ever, so I could debug the results
     }
   #endif
-
 }
 
 
@@ -217,141 +215,50 @@ void loop(){
   DEBUG_PRINTLN(car_direction);
 
 }
-
-
 // ********************** end of LOOP ***************************
-/*
-void motor_go(int l_side, int l_dir_pin, int l_break_pin, int l_speed)
-{
-
-//  l_side:       left or right
-//  l_dir_pin:    hardware direction pin
-//  l_break_pin:  hardware break pin
-//  l_speed:      speed of motor
-
-  #if DEBUG
-    Serial.println("---------------------- ");
-    Serial.print("in motor_go, side: ");
-    Serial.println(l_side);
-    Serial.print(" direction pin: ");
-    Serial.println(l_dir_pin);
-    Serial.print(" break pin: ");
-    Serial.println(l_break_pin);
-    Serial.print(" Speed: ");
-    Serial.println(l_speed);
-  #endif
-
-  int left_or_right, brk_pin, spd_pin;
-  if (RIGHT == l_side) {
-    Serial.print("*** in RIGHT side ");
-    left_or_right = MOTOR_RIGHT_DIR_PIN;
-    brk_pin = MOTOR_RIGHT_BREAK_PIN;
-    spd_pin = MOTOR_RIGHT_SPEED_PIN;
-  }
-  else {
-    Serial.print("*** in LEFT side ");
-    left_or_right = MOTOR_LEFT_DIR_PIN;
-    brk_pin = MOTOR_LEFT_BREAK_PIN;
-    spd_pin = MOTOR_LEFT_SPEED_PIN;
-  }
-
-  #if DEBUG
-    Serial.print("left_or_right: ");
-    Serial.println(left_or_right);
-    Serial.print("brk_pin: ");
-    Serial.println(brk_pin);
-    Serial.print("spd_pin: ");
-    Serial.println(spd_pin);
-    Serial.println("~~~~~~~~~~~~~~~~~~~ ");
-  #endif
-
-  digitalWrite(left_or_right, l_dir_pin); //set direction forward or backwards
-  digitalWrite(brk_pin, LOW);   //Disengage the Brake for Channel A
-  analogWrite(spd_pin, l_speed);   //Spins the motor on Channel A at full speed
-
-}
-*/
-
 
 void go_forward()
 {
-
-  #if DEBUG
-    Serial.println("in go_forward");
-  #endif
-
-/*
-  //Motor A forward @ full speed
-
-  digitalWrite(MOTOR_LEFT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
-  digitalWrite(MOTOR_LEFT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
-  analogWrite(MOTOR_LEFT_SPEED_PIN, motor_left_speed);   //Spins the motor on Channel A at full speed
-*/
+  DEBUG_PRINTLN(">>> in go_forward");
   motor_left.GoForward(motor_left.Get_Speed());
-/*
-  //Motor B forward @ full speed
-  digitalWrite(MOTOR_RIGHT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
-  digitalWrite(MOTOR_RIGHT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
-  analogWrite(MOTOR_RIGHT_SPEED_PIN, motor_right_speed);   //Spins the motor on Channel A at full speed
-*/
   motor_right.GoForward(motor_right.Get_Speed());
 }
 
 
 void go_backward()
 {
-
+  DEBUG_PRINTLN("<<< in go_backward");
   motor_left.GoBackward(MOTOR_LEFT_MAX_SPEED);
   motor_right.GoBackward(MOTOR_RIGHT_MAX_SPEED);
-
-  #if DEBUG
-  Serial.println("in go_backward");
-  #endif
 }
 
 
 void go_right()
 {
-
+  DEBUG_PRINTLN(">>> in go_right");
 }
 
 
 void go_left()
 {
-	#if DEBUG
-  	Serial.println("in go_left");
-  #endif
-
-motor_left.GoForward(MOTOR_LEFT_MAX_SPEED/2); // slower than right. to turn left
-/*
-  //Motor B forward @ half speed
-  digitalWrite(MOTOR_RIGHT_DIR_PIN, HIGH); //Establishes forward direction of Channel A
-  digitalWrite(MOTOR_RIGHT_BREAK_PIN, LOW);   //Disengage the Brake for Channel A
-  analogWrite(MOTOR_RIGHT_SPEED_PIN, 123);   //Spins the motor on Channel A at half speed
-*/
-motor_right.GoForward(MOTOR_RIGHT_MAX_SPEED); // faster than left. to go left
+  DEBUG_PRINTLN(">>> in go_left");
+  motor_left.GoForward(MOTOR_LEFT_MAX_SPEED/2); // slower than right. to turn left
+  motor_right.GoForward(MOTOR_RIGHT_MAX_SPEED); // faster than left. to go left
 }
 
 
 void  stop() {
-
-  #if DEBUG
-    Serial.println("in stop");
-  #endif
-
+  DEBUG_PRINTLN(">>> in stop");
 	motor_left.Stop();
   motor_right.Stop();
-
 }
 
 
 int  scan(int l_dir) {
   // l_dir can be FORWARD or BACKWARD
   int k=0,pos,read_dist,cnt;
+  DEBUG_PRINTLN(">>> in scan");
 
-  #if DEBUG
-    Serial.println("in scan");
-  #endif
 
 // TBD - as for now, look only forward , until car is stable
 /*
@@ -457,20 +364,6 @@ int readDistance(int l_dir) {
 
   // Calculating the distance
   dist_t = duration_t*0.034/2;
-
-
-  #if DEBUG
-   //Serial.print("in read distance: ");
-   //Serial.print("trigPin: ");
-   //Serial.print(trigPin);
-   //Serial.print("echoPin: ");
-   //Serial.println(echoPin);
-   //Serial.print("duration_t= ");
-   //Serial.print(duration_t);
-   //Serial.print("dist_t= ");
-   //Serial.println(dist_t);
-  #endif
-
   return(dist_t);
 }
 
@@ -479,37 +372,35 @@ void test_motors(){
     // void because of human validatio
     // maybe add hardware in the future to measure wheels movements
 
-    Serial.println("**** Testing Motors");
-    Serial.println("----Start LEFT,slow speed");
+    DEBUG_PRINTLN("Testing Motors");
+    DEBUG_PRINTLN("----Start LEFT,slow speed");
+
     //motor_go(LEFT,HIGH,LOW, MOTOR_LEFT_MAX_SPEED/2);
     motor_left.GoForward(MOTOR_LEFT_MAX_SPEED/2);
     delay (2000);
-    Serial.println("----Start LEFT,high speed");
+    DEBUG_PRINTLN("----Start LEFT,fast speed");
     //motor_go(LEFT,HIGH,LOW, MOTOR_LEFT_MAX_SPEED);
     motor_left.GoForward(MOTOR_LEFT_MAX_SPEED);
     delay (2000);
     stop();
     delay(2000);
-    Serial.println("----Start RIGHT,slow speed");
+    DEBUG_PRINTLN("----Start RIGHT,slow speed");
     //motor_go(RIGHT,HIGH,LOW, MOTOR_RIGHT_MAX_SPEED/2);
     motor_right.GoForward(MOTOR_RIGHT_MAX_SPEED/2);
     delay (2000);
-    Serial.println("----Start RIGHT,high speed");
+    DEBUG_PRINTLN("----Start RIGHT,slow speed");
     //motor_go(RIGHT,HIGH,LOW, MOTOR_RIGHT_MAX_SPEED);
     motor_right.GoForward(MOTOR_RIGHT_MAX_SPEED);
+    DEBUG_PRINTLN("----Start RIGHT,high speed");
     delay (2000);
     stop();
 
-    Serial.println("**** end testing motors");
-
+    DEBUG_PRINTLN("**** end testing motors");
 }
 
 
 void servo_test() {
-
-  #if DEBUG
-    Serial.println("***** testing servo ");
-  #endif
+  DEBUG_PRINTLN("***** testing servo ");
   F_servo.write(0);
   B_servo.write(0);
   delay(2000);
@@ -532,9 +423,9 @@ void ultrasonic_test(int l_dir) {
   // l_dir can be FORWARD or BACKWARD
   #if DEBUG
     if (FORWARD == l_dir)
-      Serial.println("***** FRONT Testing distance sensor");
+      DEBUG_PRINTLN("***** FRONT Testing distance sensor");
     else
-      Serial.println("***** REAR Testing distance sensor");
+      DEBUG_PRINTLN("***** FRONT Testing distance sensor");
 
     int tmp;
     for (int i = 0; i < 20; i++) {
@@ -560,11 +451,9 @@ void Calibrate_wheels() {
   // 4 - copy the value from the monitor and save it
 
     int calib_in; // value from calibration potentiometer
-
-    Serial.print("**** Calibrating wheels");
+    DEBUG_PRINTLN("**** Calibrating wheels");
     go_forward();
     delay(2000);
-
     while(true){
       // endless loop to allow calibration
       // once clibrated, unset CALIBRATE and re-start
@@ -575,7 +464,6 @@ void Calibrate_wheels() {
       set_wheel_speed(LEFT,calib_in);   // TBD - currently left wheel needs to be slower
       go_forward();
     }
-
 }
 
 
@@ -586,24 +474,23 @@ int read_calibrate_input()
   int val = analogRead(analog_in_pin);              // input value 0..1023
   int val1 = map(val, 0, 1023, 0, 255);  // mapped value to 0..255
 
-  Serial.print(val);
-  Serial.print(" mapped to 0..255 value: ");
-  Serial.println(val1);
+  //Serial.print(val);
+  //Serial.print(" mapped to 0..255 value: ");
+  //Serial.println(val1);
   return val1;
 }
 
 
 void set_wheel_speed(int l_wheel,int l_wheel_speed)
 {
-  Serial.println("---- in setting wheel speed");
-  Serial.print("wheel : ");
-  Serial.print(l_wheel);
-  Serial.print(" Speed " );
-  Serial.println(l_wheel_speed);
+  //Serial.println("---- in setting wheel speed");
+  //Serial.print("wheel : ");
+  //Serial.print(l_wheel);
+  //Serial.print(" Speed " );
+  //Serial.println(l_wheel_speed);
 
   if (LEFT == l_wheel)
     motor_left_speed = l_wheel_speed;
   else
     motor_right_speed = l_wheel_speed;
-
 }
