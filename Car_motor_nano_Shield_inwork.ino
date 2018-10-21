@@ -3,6 +3,8 @@ Arduino car
 *************************************************************/
 #include <Servo.h>
 
+#include "car_motors"
+
 /*
 #include <string>
 using std::string;
@@ -67,7 +69,7 @@ bool cng_dir ;      // kee[ [revious direction or change?
 Servo F_servo;  // create servo object to control the front servo
 Servo B_servo;  // create servo object to control the back servo
 
-
+/*
 class Motor {
 public:
   Motor(int m_name, int dir_p, int brk_p, int spd_p, int max_spd);
@@ -129,7 +131,7 @@ int Motor::Get_Speed()
 {
 	return speed;
 }
-
+*/
 
 //******************* PRE-SETUP - CREATE MOTORS ************************
 Motor motor_left(LEFT, MOTOR_LEFT_DIR_PIN, MOTOR_LEFT_BREAK_PIN, MOTOR_LEFT_SPEED_PIN, MOTOR_LEFT_MAX_SPEED);
